@@ -33,7 +33,12 @@ html, body {
 }
 
 
-#error-ui {
+.error-message {
   background-color: red;
+  color: white;
+}
+
+.warning-message {
+  background-color: #e7eb34;
   color: white;
 }
