@@ -1,0 +1,7 @@
+.injected-element-fixed-widget {
+  position: fixed;
+  z-index: 1000;
+  top: 30px;
+  left: 30px;
+  background-color: #e21fe6;
+}

@@ -1,0 +1,39 @@
+html, body {
+  width: 500px;
+  min-height: 200px;
+  background-color: #b7ec20
+  color: rgb(255, 255, 255);
+}
+
+#background {
+  background-color: rgba(47, 220, 237, 0.91);
+  background-image: url(../images/music_background.jpg);
+  background-size: cover;
+  height: 100%;
+}
+
+#song-title {
+
+}
+
+
+.generic-button {
+  color: white;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 4px;
+  text-align: center;
+  font-size: 1.5em;
+  cursor: pointer;
+  background-color: rgb(23, 211, 252);
+}
+
+.generic-button:hover {
+  background-color: rgba(221, 215, 72, 0.87);
+}
+
+
+#error-ui {
+  background-color: red;
+  color: white;
+}

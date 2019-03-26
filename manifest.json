@@ -1,0 +1,52 @@
+{
+
+  "manifest_version": 2,
+  "name": "Yandex Music UI",
+  "version": "1.0",
+
+  "description": "An extension for Yandex Music UI and hotkeys",
+
+  "icons": {
+    "48": "icons/icon.png",
+    "96": "icons/icon@2x.png"
+  },
+
+  "web_accessible_resources": [
+    "icons/icon.png"
+  ],
+
+  "browser_action": {
+
+      "browser_style": true,
+
+      "default_icon": {
+        "48": "icons/icon.png",
+        "96": "icons/icon@2x.png"
+      },
+      "default_title": "Yandex Music Player",
+      "default_popup": "toolbar_buttom_ui.html"
+  },
+
+  "permissions": [
+    "*://developer.mozilla.org/*",
+    "activeTab",
+    "tabs",
+    "<all_urls>"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.mozilla.org/*"],
+      "js": ["borderify.js"]
+    }
+  ],
+
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+M"
+      }
+    }
+  }
+
+}
