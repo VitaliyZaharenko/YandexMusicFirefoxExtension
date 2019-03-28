@@ -28,7 +28,6 @@
   },
 
   "permissions": [
-    "*://developer.mozilla.org/*",
     "activeTab",
     "tabs",
     "<all_urls>"
@@ -36,17 +35,30 @@
 
   "content_scripts": [
     {
-      "matches": ["*://*.mozilla.org/*"],
-      "js": ["borderify.js"]
+      "matches": ["https://music.yandex.ru/*"],
+      "js": ["src/utilites.js"]
     }
   ],
+
+  "background": {
+    "scripts": ["src/background_script.js"]
+  },
 
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
         "default": "Ctrl+Shift+M"
       }
+    },
+    "prev-track": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Left"
+      }
+    },
+    "next-track": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Right"
+      }
     }
   }
-
 }

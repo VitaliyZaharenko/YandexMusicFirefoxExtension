@@ -10,13 +10,13 @@ var switchToPlayerButton = null
 
 document.addEventListener("DOMContentLoaded", handleDomLoaded);
 
-browser.runtime.onMessage.addListener(function(dataFromContentScript){
-  if(dataFromContentScript.type == "trackTitle"){
-    titleElement.textContent = dataFromContentScript.msg
+browser.runtime.onMessage.addListener(function(message){
+  if(message.type == "trackTitle"){
+    titleElement.textContent = message.msg
     return
   }
-  if(dataFromContentScript.type == "debug"){
-    showWarning(dataFromContentScript.msg)
+  if(message.type == "debug"){
+    showWarning(message.msg)
   }
 })
 
@@ -42,6 +42,11 @@ function showMessage(msg){
   }, 1000 * 5)
 }
 
+
+function backgroundLog(text){
+  browser.runtime.sendMessage({ type: "backgroundLog", msg: text})
+}
+
 function getYandexMusicTab(onSuccess, onError) {
   var yandexTabPromise = tabs.query({url: "https://music.yandex.ru/*"});
   yandexTabPromise.then((tabs) => {
@@ -65,8 +70,8 @@ function executeOnYandexMusicTab(onSuccess){
 
 function executeHookScriptOnYandexTab(){
   executeOnYandexMusicTab((tab) => {
-    executePromise = tabs.executeScript(tab.id, { file: "src/yandex_music_tab_content_script.js" })
-    executePromise.then((succes) => {
+    executePromise2 = tabs.executeScript(tab.id, { file: "src/yandex_music_tab_content_script.js" })
+    executePromise2.then((succes) => {
       tabs.sendMessage(tab.id, { action: "trackTitle" })
     }, (error) => { showError(error) })
   })
@@ -109,6 +114,29 @@ function handleYandexMusicTab(tab){
   tabs.update(tab.id, { active: true })
 }
 
+function addHotkeys(){
+  document.addEventListener("keydown", event => {
+    if(event.code == "KeyO"){
+      nextButton.click()
+      return
+    }
+    if(event.code == "KeyI"){
+      playPauseButton.click()
+      return
+    }
+    if(event.code == "KeyU"){
+      prevButton.click()
+      return
+    }
+
+    if(event.code == "KeyQ"){
+      browser.runtime.sendMessage({ type: "background" })
+      return
+    }
+
+  })
+}
+
 
 function handleDomLoaded(e){
   messageElement = document.querySelector("#message-ui");
@@ -122,4 +150,5 @@ function handleDomLoaded(e){
   switchToPlayerButton = document.querySelector("#switch-to-player-tab");
   switchToPlayerButton.addEventListener("click", handleSwitchToPlayerClick);
   executeHookScriptOnYandexTab()
+  addHotkeys()
 }
