@@ -727,21 +727,34 @@
                                     <action selector="setText:" target="XfG-lQ-9wD" id="vbk-uH-ddl"/>
                                 </connections>
                             </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8AW-yn-ze7">
+                                <rect key="frame" x="18" y="213" width="182" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="I8A-Z4-HXq">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="8AW-yn-ze7" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="5XN-sJ-KdQ"/>
                             <constraint firstItem="Czq-f3-Gf2" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="Bh7-WD-oxe"/>
                             <constraint firstItem="UCC-dd-7lA" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="Hg6-et-gaw"/>
                             <constraint firstItem="Czq-f3-Gf2" firstAttribute="top" secondItem="UCC-dd-7lA" secondAttribute="bottom" constant="50" id="HwA-pi-xhb"/>
+                            <constraint firstItem="8AW-yn-ze7" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="40" id="O60-Fp-Cnc"/>
                             <constraint firstItem="UCC-dd-7lA" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="40" id="frq-W7-c2J"/>
+                            <constraint firstItem="UCC-dd-7lA" firstAttribute="leading" secondItem="8AW-yn-ze7" secondAttribute="trailing" constant="10" id="sj1-mg-Ngw"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="secondLabelTextField" destination="8AW-yn-ze7" id="QDz-0I-CE8"/>
                         <outlet property="textTextField" destination="UCC-dd-7lA" id="EyW-gl-ZOP"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="DBx-ha-CbN"/>
             </objects>
-            <point key="canvasLocation" x="75" y="655"/>
+            <point key="canvasLocation" x="75" y="658"/>
         </scene>
     </scenes>
 </document>

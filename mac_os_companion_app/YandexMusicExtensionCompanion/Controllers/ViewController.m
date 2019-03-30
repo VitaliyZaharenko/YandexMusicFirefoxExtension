@@ -11,12 +11,6 @@
 }
 
 
-- (void)setRepresentedObject:(id)representedObject {
-    [super setRepresentedObject:representedObject];
-
-}
-
-
 - (IBAction) setText: (id) sender {
     textTextField.stringValue = @"Pushed";
 }

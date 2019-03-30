@@ -6,6 +6,7 @@
 @interface ViewController : NSViewController {
     
     __weak IBOutlet NSTextField *textTextField;
+    __weak IBOutlet NSTextField *secondLabelTextField;
 }
 
 - (IBAction) setText: (id) sender;
