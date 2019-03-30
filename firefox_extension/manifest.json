@@ -15,6 +15,13 @@
     "icons/icon.png"
   ],
 
+  "applications": {
+    "gecko": {
+      "id": "yandex_music_plugin@vtz.bip",
+      "strict_min_version": "50.0"
+    }
+  },
+
   "browser_action": {
 
       "browser_style": true,
@@ -30,7 +37,8 @@
   "permissions": [
     "activeTab",
     "tabs",
-    "<all_urls>"
+    "<all_urls>",
+    "nativeMessaging"
   ],
 
   "content_scripts": [

@@ -1,6 +1,25 @@
-
-
 console.log("From background script");
+
+
+
+var port = browser.runtime.connectNative("ping_pong");
+
+console.log(port.name);
+
+/*
+Listen for messages from the app.
+*/
+port.onMessage.addListener((response) => {
+  console.log("Received: " + response);
+});
+
+// DEBUG
+console.log("Sending:  ping");
+port.postMessage("ping");
+// END DEBUG
+
+console.log("After sended")
+
 
 browser.runtime.onMessage.addListener(function(message){
   if(message.type == "background"){
@@ -16,8 +35,13 @@ browser.commands.onCommand.addListener(function(command) {
     playerPrev()
   }
   if (command == "next-track"){
-    console.log("next track")
-    playerNext()
+
+    // DEBUG
+    console.log("Sending:  ping");
+    port.postMessage("ping");
+    // END DEBUG
+
+    //playerNext()
   }
 });
 

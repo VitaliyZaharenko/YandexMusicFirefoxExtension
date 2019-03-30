@@ -1,0 +1,7 @@
+{
+  "name": "ping_pong",
+  "description": "Example host for native messaging",
+  "path": "/Users/vzakharenko/Documents/FirefoxExtensions/experimental/test_native_messaging/start_app.sh",
+  "type": "stdio",
+  "allowed_extensions": [ "yandex_music_plugin@vtz.bip" ]
+}

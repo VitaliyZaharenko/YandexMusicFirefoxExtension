@@ -1,0 +1,24 @@
+Start receiving
+3.7.1 (default, Dec 14 2018, 13:28:58) 
+[Clang 4.0.1 (tags/RELEASE_401/final)]
+Arguments
+arg0=ping_pong.py
+pingStart receiving
+3.7.1 (default, Dec 14 2018, 13:28:58) 
+[Clang 4.0.1 (tags/RELEASE_401/final)]
+Arguments
+arg0=ping_pong.py
+arg1=/Users/vzakharenko/Library/Application
+arg2=Support/Mozilla/NativeMessagingHosts/ping_pong.json
+arg3=yandex_music_plugin@vtz.bip
+Received data: 
+pingStart receiving
+3.7.1 (default, Dec 14 2018, 13:28:58) 
+[Clang 4.0.1 (tags/RELEASE_401/final)]
+Arguments
+arg0=ping_pong.py
+arg1=/Users/vzakharenko/Library/Application
+arg2=Support/Mozilla/NativeMessagingHosts/ping_pong.json
+arg3=yandex_music_plugin@vtz.bip
+Received data: 
+pingpingpingpingpingpingpingping
