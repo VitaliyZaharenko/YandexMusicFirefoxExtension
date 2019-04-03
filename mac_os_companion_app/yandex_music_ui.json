@@ -1,0 +1,7 @@
+{
+  "name": "yandex_music_ui",
+  "description": "Example host for native messaging",
+  "path": "/Users/vzakharenko/Library/Developer/Xcode/DerivedData/YandexMusicExtensionCompanion-gcbqqcjzdavtwdapugyhncsxqrnr/Build/Products/Debug/YandexMusicExtensionCompanion.app/Contents/MacOS/YandexMusicExtensionCompanion",
+  "type": "stdio",
+  "allowed_extensions": [ "yandex_music_plugin@vtz.bip" ]
+}

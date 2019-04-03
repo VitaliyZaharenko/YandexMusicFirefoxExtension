@@ -1,12 +1,10 @@
 
-tabs = browser.tabs;
 var messageElement = null
 var titleElement = null
 var prevButton = null
 var playPauseButton = null
 var nextButton = null
 var switchToPlayerButton = null
-
 
 document.addEventListener("DOMContentLoaded", handleDomLoaded);
 
@@ -20,98 +18,40 @@ browser.runtime.onMessage.addListener(function(message){
   }
 })
 
-
-function showWarning(msg){
-  messageElement.className = "warning-message"
-  showMessage(msg)
-}
-
-function showError(msg){
-  messageElement.className = "error-message"
-  showMessage(msg)
-}
-
-function showMessage(msg){
-  messageElement.textContent = msg;
-  messageElement.style.display = "block";
-
-  setTimeout(function() {
-    messageElement.className = ""
-    messageElement.textContent = "";
-    messageElement.style.display = "none";
-  }, 1000 * 5)
-}
-
-
 function backgroundLog(text){
-  browser.runtime.sendMessage({ type: "backgroundLog", msg: text})
+  browser.runtime.sendMessage({ type: "backgroundLog", msg: text, from: "ToolbarUI"})
 }
-
-function getYandexMusicTab(onSuccess, onError) {
-  var yandexTabPromise = tabs.query({url: "https://music.yandex.ru/*"});
-  yandexTabPromise.then((tabs) => {
-    if(tabs == null || tabs.length == 0){
-      onError(null)
-    } else {
-      onSuccess(tabs[0])
-    }
-  }, (error) => {
-      onError(error)
-  })
-}
-
-function executeOnYandexMusicTab(onSuccess){
-  getYandexMusicTab((tab) => {
-    onSuccess(tab)
-  }, (error) => {
-    showError(error)
-  })
-}
-
-function executeHookScriptOnYandexTab(){
-  executeOnYandexMusicTab((tab) => {
-    executePromise2 = tabs.executeScript(tab.id, { file: "src/yandex_music_tab_content_script.js" })
-    executePromise2.then((succes) => {
-      tabs.sendMessage(tab.id, { action: "trackTitle" })
-    }, (error) => { showError(error) })
-  })
-}
-
 
 function handlePrevSongClick(e){
-  executeOnYandexMusicTab((tab) => {
-    tabs.sendMessage(tab.id, { action: "prev" })
-  })
+  browser.runtime.sendMessage({ type: "background", action: "playerPrev"})
 }
 
 function handlePlayPauseClick(e){
-  executeOnYandexMusicTab((tab) => {
-    tabs.sendMessage(tab.id, { action: "playPause" })
-  })
+  browser.runtime.sendMessage({ type: "background", action: "playerPlayPause"})
 }
 
 function handleNextSongClick(e){
-  executeOnYandexMusicTab((tab) => {
-    tabs.sendMessage(tab.id, { action: "next" })
-  })
+  browser.runtime.sendMessage({ type: "background", action: "playerNext"})
 }
 
 function handleSwitchToPlayerClick(e){
-  var currenTabPromise = tabs.query({url: "https://music.yandex.ru/*"});
-  currenTabPromise.then((tabs) => {
-    handleYandexMusicTab(tabs[0])
-  }, (error) => {
-    titleElement.textContent = error;
-  })
+  browser.runtime.sendMessage({ type: "background", action: "playerSwitchToPlayer"})
 }
 
-function handleYandexMusicTab(tab){
-  if(tab == null){
-    showError("Tab is null")
-    return
-  }
 
-  tabs.update(tab.id, { active: true })
+function checkIfPlayerAvailable(){
+  browser.runtime.sendMessage({ type: "background", action: "playerIsActive"}).then((success) => {
+    if (!success) {
+      showError("Response is falsive")
+      return
+    }
+    if(success.msg == "SUCCESS"){
+      showMessage("Player is Active")
+    }
+    if(success.msg == "FAILURE" || success.msg == "ERROR"){
+      showError("Player is not available")
+    }
+  })
 }
 
 function addHotkeys(){
@@ -133,7 +73,6 @@ function addHotkeys(){
       browser.runtime.sendMessage({ type: "background" })
       return
     }
-
   })
 }
 
@@ -149,6 +88,31 @@ function handleDomLoaded(e){
   nextButton.addEventListener("click", handleNextSongClick);
   switchToPlayerButton = document.querySelector("#switch-to-player-tab");
   switchToPlayerButton.addEventListener("click", handleSwitchToPlayerClick);
-  executeHookScriptOnYandexTab()
+
+  checkIfPlayerAvailable()
   addHotkeys()
+}
+
+
+// script as view
+
+function showWarning(msg){
+  messageElement.className = "warning-message"
+  showMessage(msg)
+}
+
+function showError(msg){
+  messageElement.className = "error-message"
+  showMessage(msg)
+}
+
+function showMessage(msg){
+  messageElement.textContent = msg;
+  messageElement.style.display = "block";
+
+  setTimeout(function() {
+    messageElement.className = ""
+    messageElement.textContent = "";
+    messageElement.style.display = "none";
+  }, 1000 * 5)
 }

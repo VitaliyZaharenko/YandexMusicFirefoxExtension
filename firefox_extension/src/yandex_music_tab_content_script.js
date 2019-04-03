@@ -1,78 +1,87 @@
 
-var detection_element_id = "vz-yandex" + browser.runtime.id.hashCode()
 var yandexPrevSongElement = null
 var yandexNextSongElement = null
 var yandexPlayPauseElement = null
 var trackTitleElement = null
 
-var alreadyHookedElement = document.querySelector("#" + detection_element_id)
+// var alreadyHookedElement = document.querySelector("#" + detection_element_id)
+//
+// if (alreadyHookedElement == null){
+//   backgroundLog("Creating detection element with id=" + detection_element_id)
+//   addAlreadyHookedElement()
+//   setupHooks()
+// } else {
+//   backgroundLog("Detection element with id=" + detection_element_id + " already exists")
+// }
 
-if (alreadyHookedElement == null){
-  backgroundLog("Creating detection element with id=" + detection_element_id)
-  addAlreadyHookedElement()
-  setupHooks()
-} else {
-  backgroundLog("Detection element with id=" + detection_element_id + " already exists")
-}
-
+setupHooks()
 
 function backgroundLog(text){
-  browser.runtime.sendMessage({ type: "backgroundLog", msg: text})
+  browser.runtime.sendMessage({ type: "backgroundLog", msg: text, from: "yandex content script"})
 }
 
 function showMessageInToolbarUI(text){
   browser.runtime.sendMessage({ type: "debug", msg: text})
 }
 
-function addAlreadyHookedElement(){
-  var div = document.createElement("div")
-  div.setAttribute("id", detection_element_id)
-  document.body.appendChild(div)
-}
-
 
 function setupHooks(){
+
   yandexPrevSongElement = document.querySelector(".player-controls__btn_prev")
   yandexNextSongElement = document.querySelector(".player-controls__btn_next")
-  yandexPlayPauseElement = document.querySelector(".player-controls__btn_pause")
+  yandexPlayPauseElement = document.querySelector(".player-controls__btn_pause") ||
+                           document.querySelector(".player-controls__btn_play")
 
   trackTitleElement = document.querySelector(".track__title")
 
-  browser.runtime.onMessage.addListener(function(message){
+  browser.runtime.onMessage.addListener(function(message, sender, sendResponse){
 
-    backgroundLog(message.type)
-    backgroundLog(message.action)
+    if(message.type == "playerIsActive"){
+      sendResponse({type: "playerIsActive", status: true})
+    }
 
     if(message.type == "playerControl"){
-      handleCommand(message.command)
-    }
-
-    if(message.action == "next"){
-      yandexNextSongElement.click()
-      return
-    }
-    if(message.action == "prev"){
-      yandexPrevSongElement.click()
-      return
-    }
-    if(message.action == "playPause"){
-      yandexPlayPauseElement.click()
-      return
+      handleAction(message.action, sendResponse)
     }
 
     if(message.action == "trackTitle"){
       browser.runtime.sendMessage({ type: "trackTitle", msg: trackTitleElement.textContent })
     }
-
   })
 }
 
+function handleAction(action, sendResponse){
+  if(action == "next"){
+    playerNext(sendResponse)
+  }
+  if(action == "prev"){
+    playerPrev(sendResponse)
+  }
+  if(action == "playPause"){
+    playerPlayPause(sendResponse)
+  }
+  if(action == "playerIsActive"){
+    playerIsActive(sendResponse)
+  }
+}
 
-function handleCommand(command){
-  if(command == "next"){
-    yandexNextSongElement.click()
-  }
-  if(command == "prev"){
-    yandexPrevSongElement.click()
-  }
+// player controls interface
+
+function playerPlayPause(sendResponse){
+  yandexPlayPauseElement.click()
+  sendResponse({ type: "contentScriptResponse", msg: "SUCCESS" })
+}
+
+function playerPrev(sendResponse){
+  yandexPrevSongElement.click()
+  sendResponse({ type: "contentScriptResponse", msg: "SUCCESS" })
+}
+
+function playerNext(sendResponse){
+  yandexNextSongElement.click()
+  sendResponse({ type: "contentScriptResponse", msg: "SUCCESS" })
+}
+
+function playerIsActive(sendResponse){
+  sendResponse({ type: "contentScriptResponse", msg: "SUCCESS" })
 }

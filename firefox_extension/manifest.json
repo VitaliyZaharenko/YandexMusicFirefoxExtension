@@ -49,7 +49,7 @@
   ],
 
   "background": {
-    "scripts": ["src/background_script.js"]
+    "scripts": ["src/utilites.js", "src/background_script.js"]
   },
 
   "commands": {
@@ -58,14 +58,29 @@
         "default": "Ctrl+Shift+M"
       }
     },
-    "prev-track": {
+    "prev-track-command": {
       "suggested_key": {
         "default": "Ctrl+Shift+Left"
       }
     },
-    "next-track": {
+    "next-track-command": {
       "suggested_key": {
         "default": "Ctrl+Shift+Right"
+      }
+    },
+    "play-pause-command": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Up"
+      }
+    },
+    "run-native-app-command": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+I"
+      }
+    },
+    "send-to-native-app-command": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+O"
       }
     }
   }
