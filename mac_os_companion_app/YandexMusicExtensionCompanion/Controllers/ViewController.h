@@ -3,13 +3,16 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface ViewController : NSViewController {
+@interface ViewController : NSViewController<NSTableViewDataSource, NSTableViewDelegate> {
     
     __weak IBOutlet NSTextField *textTextField;
-    __weak IBOutlet NSTextField *secondLabelTextField;
+    __weak IBOutlet NSTableView *tableView;
 }
 
-- (IBAction) setText: (id) sender;
+@property (nonatomic, strong) NSMutableArray* arguments;
+
+- (IBAction)clearStdinPressed:(id)sender;
+
 
 @end
 

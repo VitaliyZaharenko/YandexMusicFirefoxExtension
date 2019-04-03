@@ -9,17 +9,9 @@
 - (void)sendEvent:(NSEvent *)event {
     
     NSEventType type = [event type];
-    if(type == NSEventTypeKeyUp || type == NSEventTypeKeyUp ){
-        NSLog(@"Keyup or keydown");
-    }
-    
     if(type == NSEventTypeSystemDefined){
         [self handleMediaKeyEvent:event];
     }
-    if(type == NSEventTypeApplicationDefined){
-        NSLog(@"Application defined");
-    }
-    
     [super sendEvent:event];
 }
 
