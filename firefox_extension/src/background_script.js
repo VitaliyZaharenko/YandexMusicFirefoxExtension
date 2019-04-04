@@ -51,7 +51,7 @@ function handleBackgroundAction(action, sendResponse){
 }
 
 function checkPlayerAvailable(sendResponse){
-  sendToPlayer("playerIsActive").then((success) => {
+  sendToPlayer("playerIsActive", (success) => {
     if(success){
       sendResponse({type: "backgroundResponse", msg: "SUCCESS"})
     } else {
@@ -123,30 +123,54 @@ function unknownCommand(command){
   console.log("unknown command: " + command)
 }
 
+function injectIfNotActiveAndSend(actionFunction){
+  checkPlayerAvailable((response) => {
+    if(response.msg == "SUCCESS"){
+      showMessage("PLAYER AVAILABLE")
+      actionFunction()
+    }
+    if(response.msg == "FAILURE" || response.msg == "ERROR"){
+      executeHookScriptOnYandexTab((success) => {
+        actionFunction()
+      }, (error) => {
+        showError("Error when trying to inject hook script: " + error)
+      })
+    }
+  })
+}
+
 function playerNext(){
-  sendToPlayer("next")
+  injectIfNotActiveAndSend(function(){
+      sendToPlayer("next")
+  })
 }
 
 function playerPrev(){
-  sendToPlayer("prev")
+  injectIfNotActiveAndSend(function(){
+    sendToPlayer("prev")
+  })
 }
 
 function playerPlayPause(){
-  sendToPlayer("playPause")
+  injectIfNotActiveAndSend(function(){
+      sendToPlayer("playPause")
+  })
 }
 
-function sendToPlayer(action, sendResponse){
+function sendToPlayer(action, onSuccess, onError){
   var currenTabPromise = browser.tabs.query({url: "https://music.yandex.ru/*"});
   currenTabPromise.then((tabs) => {
     if(tabs.length == 0){
-      showError("No Yandex Music Tabs")
+      onError("No Yandex Music Tabs")
     } else {
       browser.tabs.sendMessage(tabs[0].id, { type: "playerControl", action: action} ).then((response) => {
-        if(sendResponse){
-          sendResponse(response)
+        if(onSuccess){
+          onSuccess(response)
         } else {
           showMessage(response)
         }
+      }).catch((error) => {
+        onError(error)
       })
     }
   }, (error) => {
