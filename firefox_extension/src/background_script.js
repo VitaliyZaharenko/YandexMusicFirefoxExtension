@@ -126,7 +126,6 @@ function unknownCommand(command){
 function injectIfNotActiveAndSend(actionFunction){
   checkPlayerAvailable((response) => {
     if(response.msg == "SUCCESS"){
-      showMessage("PLAYER AVAILABLE")
       actionFunction()
     }
     if(response.msg == "FAILURE" || response.msg == "ERROR"){
@@ -182,7 +181,25 @@ function runNativeApp() {
   console.log("running native app");
   port = browser.runtime.connectNative("yandex_music_ui");
   port.onMessage.addListener((response) => {
-    console.log("Received: " + response);
+    switch (response.action){
+      case "playPause":
+        playerPlayPause()
+        break
+      case "next":
+        playerNext()
+        break
+      case "prev":
+        playerPrev()
+        break
+      default:
+        showError("Unknown native app action: " + action)
+        break
+    }
+  });
+  port.onDisconnect.addListener((p) => {
+    if (p.error) {
+      console.log(`Disconnected due to an error: ${p.error.message}`);
+    }
   });
 }
 

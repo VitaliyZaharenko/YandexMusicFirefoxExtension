@@ -2,6 +2,7 @@
 
 #import "VTZApplication.h"
 #import <IOKit/hidsystem/ev_keymap.h>
+#import "VTZConstants.h"
 
 
 @implementation VTZApplication
@@ -37,15 +38,24 @@
 }
 
 - (void) handlePrevPressed {
-    
+    NSDictionary * userInfo = @{VTZApplicationDidPressMediaKeyTypeKey: VTZApplicationDidPressMediaKeyBackward};
+    [[NSNotificationCenter defaultCenter] postNotificationName: VTZApplicationDidPressMediaKeyNotification
+                                                        object: self
+                                                      userInfo: userInfo];
 }
 
 - (void) handlePlayPausePressed {
-    
+    NSDictionary * userInfo = @{VTZApplicationDidPressMediaKeyTypeKey: VTZApplicationDidPressMediaKeyPlayPause};
+    [[NSNotificationCenter defaultCenter] postNotificationName: VTZApplicationDidPressMediaKeyNotification
+                                                        object: self
+                                                      userInfo: userInfo];
 }
 
 - (void) handleNextPressed {
-    
+    NSDictionary * userInfo = @{VTZApplicationDidPressMediaKeyTypeKey: VTZApplicationDidPressMediaKeyForward};
+    [[NSNotificationCenter defaultCenter] postNotificationName: VTZApplicationDidPressMediaKeyNotification
+                                                        object: self
+                                                      userInfo: userInfo];
 }
 
 @end

@@ -2,11 +2,14 @@
 //
 
 #import "ViewController.h"
+#import "VTZUtils.h"
+#import "VTZConstants.h"
+#import "VTZBrowserMediaPlayer.h"
 
 @implementation ViewController {
     NSFileHandle* pipeReadHandle;
+    VTZBrowserMediaPlayer* player;
 }
-
 
 @synthesize arguments;
 
@@ -16,73 +19,71 @@
     tableView.delegate = self;
     tableView.dataSource = self;
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleNotification:) name: @"VTZStdinputNotification" object: self];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleNotification:) name: VTZApplicationStdInputNotification object: self];
     
-    [self startListerningInputStream];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleMediaKeys:) name: VTZApplicationDidPressMediaKeyNotification object: nil];
     
+    [VTZUtils startListerningStdinInBackground:nil];
+    
+    player = [[VTZBrowserMediaPlayer alloc] initWithView:self];
     
 }
 
-- (void) wirteToStdout {
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Weverything"
-    
-    char testmsg[1024];
-    char * some  = "Blablabla";
-    uint32_t len = strlen(some);
-    //sprintf(lentstr, "Len is=%u", len);
-    //fwrite(lentstr, sizeof(char), strlen(lentstr), stdout);
-    size_t numberWrited = fwrite(&len, sizeof(len), 1, stdout);
-    size_t messageWrited = fwrite(some, sizeof(char), len, stdout);
-    //fflush(stdout);
-    //    sprintf(testmsg, "First write=%u, secondWrite=%u", numberWrited, messageWrited);
-    //    fwrite(testmsg, sizeof(char), strlen(testmsg), stdout);
-    //    fflush(stdout);
-    
-    fwrite("Some test message", sizeof(char), strlen("Some test message"), stderr);
-    fflush(stderr);
-    
-    #pragma clang diagnostic pop
-}
-
-- (void) startListerningInputStream {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        while(YES){
-            int BUFFER_SIZE = 1024;
-            char string[BUFFER_SIZE];
-            
-            u_int32_t messageLength;
-            fread(&messageLength, sizeof(messageLength), 1, stdin);
-            if(messageLength >= BUFFER_SIZE){
-                [self postNotificationWithMessage:@"Message length bigger than buffer"];
-                break;
-            }
-            fread(&string, sizeof(char) * messageLength, 1, stdin);
-            NSString* readed = [NSString stringWithCString:string encoding:NSUTF8StringEncoding];
-            [self postNotificationWithMessage:readed];
-        }
-    });
-}
-
-- (void) postNotificationWithMessage: (NSString*) message {
-    NSDictionary* userInfo = @{@"message": message};
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"VTZStdinputNotification" object:self userInfo: userInfo];
-}
 
 - (void) clearStdinPressed:(id)sender {
     [self.arguments removeAllObjects];
     [tableView reloadData];
 }
 
+- (IBAction)backButtonPressed:(id)sender {
+    [player prev];
+}
+
+- (IBAction)playPauseButtonPressed:(id)sender {
+    [player playPause];
+}
+
+- (IBAction)nextButtonPressed:(id)sender {
+    [player next];
+}
+
 
 - (void) handleNotification: (NSNotification *)notification {
     
-    if([notification.name isEqualToString:@"VTZStdinputNotification"]){
-        NSString* message = notification.userInfo[@"message"];
+    if([notification.name isEqualToString:VTZApplicationStdInputNotification]){
+        NSString* message = notification.userInfo[VTZApplicationStdInputMessageKey];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self messageFromStdinReceived:message];
         });
     }
+}
+
+- (void) handleMediaKeys: (NSNotification *) notification {
+    if(![notification.name isEqualToString: VTZApplicationDidPressMediaKeyNotification]){
+        return;
+    }
+    NSString * mediaKeyType = notification.userInfo[VTZApplicationDidPressMediaKeyTypeKey];
+    
+    if ([mediaKeyType isEqualToString:VTZApplicationDidPressMediaKeyForward]){
+        [player next];
+    } else if ([mediaKeyType isEqualToString:VTZApplicationDidPressMediaKeyBackward]){
+        [player prev];
+    } else if ([mediaKeyType isEqualToString:VTZApplicationDidPressMediaKeyPlayPause]){
+        [player playPause];
+    }
+}
+
+
+# pragma mark VTZMediaPlayerViewProtocol
+
+- (void)showError:(NSError *)error {
+    [arguments addObject:[error localizedDescription]];
+    [tableView reloadData];
+}
+
+- (void)showMessage:(NSString *)message {
+    [arguments addObject:message];
+    [tableView reloadData];
 }
 
 
@@ -94,7 +95,6 @@
     [self.arguments addObject:message];
     [tableView reloadData];
 }
-
 
 
 # pragma mark NSTableView delegate and dataSource
@@ -110,5 +110,6 @@
     cell.textField.stringValue = argument;
     return cell;
 }
+
 
 @end

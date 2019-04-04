@@ -13,6 +13,9 @@
 		53515452224D5D17003987F9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53515450224D5D17003987F9 /* Main.storyboard */; };
 		53515455224D5D17003987F9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 53515454224D5D17003987F9 /* main.m */; };
 		535E9129224E2E79001DF909 /* VTZApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 535E9128224E2E79001DF909 /* VTZApplication.m */; };
+		53A5D774225630D9008C715B /* VTZConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A5D773225630D9008C715B /* VTZConstants.m */; };
+		53A5D7772256349F008C715B /* VTZBrowserMediaPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A5D7762256349E008C715B /* VTZBrowserMediaPlayer.m */; };
+		53A5D77B22563DFD008C715B /* VTZUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A5D77A22563DFD008C715B /* VTZUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +31,13 @@
 		53515456224D5D17003987F9 /* YandexMusicExtensionCompanion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YandexMusicExtensionCompanion.entitlements; sourceTree = "<group>"; };
 		535E9127224E2E79001DF909 /* VTZApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VTZApplication.h; sourceTree = "<group>"; };
 		535E9128224E2E79001DF909 /* VTZApplication.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VTZApplication.m; sourceTree = "<group>"; };
+		53A5D77022562CC8008C715B /* VTZMediaPlayerProtocols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VTZMediaPlayerProtocols.h; sourceTree = "<group>"; };
+		53A5D77222562F02008C715B /* VTZConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VTZConstants.h; sourceTree = "<group>"; };
+		53A5D773225630D9008C715B /* VTZConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VTZConstants.m; sourceTree = "<group>"; };
+		53A5D7752256347C008C715B /* VTZBrowserMediaPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VTZBrowserMediaPlayer.h; sourceTree = "<group>"; };
+		53A5D7762256349E008C715B /* VTZBrowserMediaPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VTZBrowserMediaPlayer.m; sourceTree = "<group>"; };
+		53A5D77922563D41008C715B /* VTZUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VTZUtils.h; sourceTree = "<group>"; };
+		53A5D77A22563DFD008C715B /* VTZUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VTZUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +70,9 @@
 		53515447224D5D15003987F9 /* YandexMusicExtensionCompanion */ = {
 			isa = PBXGroup;
 			children = (
+				53A5D77822563CB5008C715B /* Utilites */,
+				53A5D77122562EF1008C715B /* Constants */,
+				53A5D76F22562BAB008C715B /* MediaPlayer */,
 				5351545E224D5F0F003987F9 /* Other */,
 				5351545D224D5D94003987F9 /* Storyboards */,
 				5351545C224D5D83003987F9 /* Controllers */,
@@ -97,6 +110,34 @@
 				535E9128224E2E79001DF909 /* VTZApplication.m */,
 			);
 			path = Other;
+			sourceTree = "<group>";
+		};
+		53A5D76F22562BAB008C715B /* MediaPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				53A5D77022562CC8008C715B /* VTZMediaPlayerProtocols.h */,
+				53A5D7752256347C008C715B /* VTZBrowserMediaPlayer.h */,
+				53A5D7762256349E008C715B /* VTZBrowserMediaPlayer.m */,
+			);
+			path = MediaPlayer;
+			sourceTree = "<group>";
+		};
+		53A5D77122562EF1008C715B /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				53A5D77222562F02008C715B /* VTZConstants.h */,
+				53A5D773225630D9008C715B /* VTZConstants.m */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		53A5D77822563CB5008C715B /* Utilites */ = {
+			isa = PBXGroup;
+			children = (
+				53A5D77922563D41008C715B /* VTZUtils.h */,
+				53A5D77A22563DFD008C715B /* VTZUtils.m */,
+			);
+			path = Utilites;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,7 +210,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				5351544D224D5D15003987F9 /* ViewController.m in Sources */,
+				53A5D774225630D9008C715B /* VTZConstants.m in Sources */,
+				53A5D77B22563DFD008C715B /* VTZUtils.m in Sources */,
 				53515455224D5D17003987F9 /* main.m in Sources */,
+				53A5D7772256349F008C715B /* VTZBrowserMediaPlayer.m in Sources */,
 				5351544A224D5D15003987F9 /* AppDelegate.m in Sources */,
 				535E9129224E2E79001DF909 /* VTZApplication.m in Sources */,
 			);
