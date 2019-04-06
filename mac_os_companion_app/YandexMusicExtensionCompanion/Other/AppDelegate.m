@@ -7,6 +7,7 @@
 @interface AppDelegate () {
     NSStatusItem * statusItem;
     NSPopover * popover;
+    NSEvent * clicksMonitor;
 }
 
 @end
@@ -21,6 +22,12 @@
     
     popover = [[NSPopover alloc] init];
     popover.contentViewController = [PlayerViewController instance];
+    
+    clicksMonitor = [NSEvent addGlobalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown handler: ^ (NSEvent * event){
+        if (self->popover.isShown){
+            [self showPlayer:NO];
+        }
+    }];
 }
 
 

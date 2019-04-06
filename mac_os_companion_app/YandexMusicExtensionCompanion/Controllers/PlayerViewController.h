@@ -8,6 +8,9 @@
 
 + (instancetype) instance;
 
+- (instancetype) initWithCoder:(NSCoder *)coder;
+- (instancetype) initWithNibName:(NSNibName)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
+
 - (IBAction)backButtonPressed:(id)sender;
 - (IBAction)playPauseButtonPressed:(id)sender;
 - (IBAction)nextButtonPressed:(id)sender;

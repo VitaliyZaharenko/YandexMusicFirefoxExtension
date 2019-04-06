@@ -10,10 +10,28 @@
     VTZBrowserMediaPlayer* player;
 }
 
+# pragma mark Initialization
 
 + (instancetype) instance {
     NSStoryboard * storyboard = [NSStoryboard storyboardWithName:@"Main" bundle:nil];
     return [storyboard instantiateControllerWithIdentifier:@"PlayerViewController"];
+}
+
+
+- (instancetype)initWithNibName:(NSNibName)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if(self){
+        [self commonInit];
+    }
+    return self;
+}
+
+- (instancetype) initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    if(self){
+        [self commonInit];
+    }
+    return self;
 }
 
 # pragma mark Lifecycle
@@ -21,9 +39,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self subscribeToNotifications];
-    [VTZUtils startListerningStdinInBackground:nil];
-    player = [[VTZBrowserMediaPlayer alloc] initWithView:self];
 }
 
 # pragma mark Response to actions
@@ -80,6 +95,12 @@
 
 
 # pragma mark Private Methods
+
+- (void) commonInit {
+    [self subscribeToNotifications];
+    [VTZUtils startListerningStdinInBackground:nil];
+    player = [[VTZBrowserMediaPlayer alloc] initWithView:self];
+}
 
 // should be called in main thread
 
