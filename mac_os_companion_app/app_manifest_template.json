@@ -1,0 +1,7 @@
+{
+  "name": "$app_name",
+  "description": "$description",
+  "path": "$app_path",
+  "type": "stdio",
+  "allowed_extensions": [ "$extension_id" ]
+}

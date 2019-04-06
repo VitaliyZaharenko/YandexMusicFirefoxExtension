@@ -1,4 +1,4 @@
-NATIVE_APP_MANIFEST="${PWD}/yandex_music_ui.json"
+NATIVE_APP_MANIFEST=$1
 FIREFOX_MANIFEST_DESTINATION="${HOME}/Library/Application Support/Mozilla/NativeMessagingHosts/"
 echo Copy File
 echo $NATIVE_APP_MANIFEST
