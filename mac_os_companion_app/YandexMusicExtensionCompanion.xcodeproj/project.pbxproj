@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5351544A224D5D15003987F9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53515449224D5D15003987F9 /* AppDelegate.m */; };
-		5351544D224D5D15003987F9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5351544C224D5D15003987F9 /* ViewController.m */; };
+		5351544D224D5D15003987F9 /* PlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5351544C224D5D15003987F9 /* PlayerViewController.m */; };
 		5351544F224D5D17003987F9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5351544E224D5D17003987F9 /* Assets.xcassets */; };
 		53515452224D5D17003987F9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53515450224D5D17003987F9 /* Main.storyboard */; };
 		53515455224D5D17003987F9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 53515454224D5D17003987F9 /* main.m */; };
@@ -22,8 +22,8 @@
 		53515445224D5D15003987F9 /* YandexMusicExtensionCompanion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YandexMusicExtensionCompanion.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53515448224D5D15003987F9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		53515449224D5D15003987F9 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		5351544B224D5D15003987F9 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		5351544C224D5D15003987F9 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		5351544B224D5D15003987F9 /* PlayerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlayerViewController.h; sourceTree = "<group>"; };
+		5351544C224D5D15003987F9 /* PlayerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlayerViewController.m; sourceTree = "<group>"; };
 		5351544E224D5D17003987F9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		53515451224D5D17003987F9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		53515453224D5D17003987F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -86,8 +86,8 @@
 		5351545C224D5D83003987F9 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				5351544B224D5D15003987F9 /* ViewController.h */,
-				5351544C224D5D15003987F9 /* ViewController.m */,
+				5351544B224D5D15003987F9 /* PlayerViewController.h */,
+				5351544C224D5D15003987F9 /* PlayerViewController.m */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -209,7 +209,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5351544D224D5D15003987F9 /* ViewController.m in Sources */,
+				5351544D224D5D15003987F9 /* PlayerViewController.m in Sources */,
 				53A5D774225630D9008C715B /* VTZConstants.m in Sources */,
 				53A5D77B22563DFD008C715B /* VTZUtils.m in Sources */,
 				53515455224D5D17003987F9 /* main.m in Sources */,

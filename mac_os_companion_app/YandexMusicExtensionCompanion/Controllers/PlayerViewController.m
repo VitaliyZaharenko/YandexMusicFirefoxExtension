@@ -1,39 +1,32 @@
 //  Copyright © 2019 vzakharenko. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "PlayerViewController.h"
 #import "VTZUtils.h"
 #import "VTZConstants.h"
 #import "VTZBrowserMediaPlayer.h"
 
-@implementation ViewController {
-    NSFileHandle* pipeReadHandle;
+@implementation PlayerViewController {
     VTZBrowserMediaPlayer* player;
 }
 
-@synthesize arguments;
+
++ (instancetype) instance {
+    NSStoryboard * storyboard = [NSStoryboard storyboardWithName:@"Main" bundle:nil];
+    return [storyboard instantiateControllerWithIdentifier:@"PlayerViewController"];
+}
+
+# pragma mark Lifecycle
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.arguments = [NSMutableArray new];
-    tableView.delegate = self;
-    tableView.dataSource = self;
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleNotification:) name: VTZApplicationStdInputNotification object: self];
-    
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleMediaKeys:) name: VTZApplicationDidPressMediaKeyNotification object: nil];
-    
+    [self subscribeToNotifications];
     [VTZUtils startListerningStdinInBackground:nil];
-    
     player = [[VTZBrowserMediaPlayer alloc] initWithView:self];
-    
 }
 
-
-- (void) clearStdinPressed:(id)sender {
-    [self.arguments removeAllObjects];
-    [tableView reloadData];
-}
+# pragma mark Response to actions
 
 - (IBAction)backButtonPressed:(id)sender {
     [player prev];
@@ -47,6 +40,7 @@
     [player next];
 }
 
+# pragma mark Notifications handling
 
 - (void) handleNotification: (NSNotification *)notification {
     
@@ -77,13 +71,11 @@
 # pragma mark VTZMediaPlayerViewProtocol
 
 - (void)showError:(NSError *)error {
-    [arguments addObject:[error localizedDescription]];
-    [tableView reloadData];
+    NSAssert(NO, @"NOT IMPELEMENTED");
 }
 
 - (void)showMessage:(NSString *)message {
-    [arguments addObject:message];
-    [tableView reloadData];
+    NSAssert(NO, @"NOT IMPELEMENTED");
 }
 
 
@@ -92,24 +84,12 @@
 // should be called in main thread
 
 - (void) messageFromStdinReceived: (NSString*) message {
-    [self.arguments addObject:message];
-    [tableView reloadData];
+    NSAssert(NO, @"NOT IMPELEMENTED");
 }
 
-
-# pragma mark NSTableView delegate and dataSource
-
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-    return arguments.count;
+- (void) subscribeToNotifications {
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleNotification:) name: VTZApplicationStdInputNotification object: self];    
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleMediaKeys:) name: VTZApplicationDidPressMediaKeyNotification object: nil];
 }
-
-- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-    
-    NSString * argument = self.arguments[row];
-    NSTableCellView* cell = [tableView makeViewWithIdentifier:@"ArgumentCell" owner:nil];
-    cell.textField.stringValue = argument;
-    return cell;
-}
-
 
 @end

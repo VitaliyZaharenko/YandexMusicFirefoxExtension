@@ -2,8 +2,12 @@
 //
 
 #import "AppDelegate.h"
+#import "PlayerViewController.h"
 
-@interface AppDelegate ()
+@interface AppDelegate () {
+    NSStatusItem * statusItem;
+    NSPopover * popover;
+}
 
 @end
 
@@ -11,13 +15,32 @@
 
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Insert code here to initialize your application
+    statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
+    statusItem.button.image = [NSImage imageNamed:@"playerIcon"];
+    statusItem.button.action = @selector(playerIconTapped);
+    
+    popover = [[NSPopover alloc] init];
+    popover.contentViewController = [PlayerViewController instance];
 }
 
 
-- (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Insert code here to tear down your application
+# pragma mark Private Helper Methods
+
+- (void) playerIconTapped {
+    [self showPlayer:!popover.isShown];
 }
+
+- (void) showPlayer: (BOOL) show {
+    if(show){
+        if(statusItem.button != nil){
+            [popover showRelativeToRect:statusItem.button.bounds ofView:statusItem.button preferredEdge:NSRectEdgeMinY];
+        }
+    } else {
+        [popover performClose:nil];
+    }
+    
+}
+
 
 
 @end
