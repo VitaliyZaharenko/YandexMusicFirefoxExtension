@@ -1,4 +1,6 @@
-showMessage("From background script", false)
+import { PlayerCapabilities } from '../player/capabilities'
+
+showMessage("From background script", "")
 
 
 var port = null
@@ -14,7 +16,7 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse){
 })
 
 
-executeHookScriptOnYandexTab((succes) => {
+executeHookScriptOnYandexTab((success) => {
   showMessage(success, "from content script")
 }, (error) => {
   showError(error, "from content script")
@@ -86,7 +88,7 @@ function executeOnYandexMusicTab(onSuccess){
 
 function executeHookScriptOnYandexTab(onSuccess, onError){
   executeOnYandexMusicTab((tab) => {
-    executePromise2 = browser.tabs.executeScript(tab.id, { file: "src/yandex_music_tab_content_script.js" })
+    let executePromise2 = browser.tabs.executeScript(tab.id, { file: "lib/build/yandex_music_content_script_bundle.js" })
     executePromise2.then((success) => {
       showMessage("Content script injected")
     }, onError)
@@ -156,7 +158,7 @@ function playerPlayPause(){
   })
 }
 
-function sendToPlayer(action, onSuccess, onError){
+function sendToPlayer(action, onSuccess?, onError?){
   var currenTabPromise = browser.tabs.query({url: "https://music.yandex.ru/*"});
   currenTabPromise.then((tabs) => {
     if(tabs.length == 0){
@@ -192,7 +194,7 @@ function runNativeApp() {
         playerPrev()
         break
       default:
-        showError("Unknown native app action: " + action)
+        showError("Unknown native app action: " + response.action)
         break
     }
   });

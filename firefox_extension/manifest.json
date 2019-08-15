@@ -1,10 +1,10 @@
 {
 
   "manifest_version": 2,
-  "name": "Yandex Music UI",
-  "version": "1.0",
+  "name": "Universal Music Player",
+  "version": "0.1.0",
 
-  "description": "An extension for Yandex Music UI and hotkeys",
+  "description": "An extension for managing web music players",
 
   "icons": {
     "48": "icons/icon.png",
@@ -30,8 +30,8 @@
         "48": "icons/icon.png",
         "96": "icons/icon@2x.png"
       },
-      "default_title": "Yandex Music Player",
-      "default_popup": "toolbar_buttom_ui.html"
+      "default_title": "Music Player",
+      "default_popup": "html/toolbar_buttom_ui.html"
   },
 
   "permissions": [
@@ -41,15 +41,8 @@
     "nativeMessaging"
   ],
 
-  "content_scripts": [
-    {
-      "matches": ["https://music.yandex.ru/*"],
-      "js": ["src/utilites.js"]
-    }
-  ],
-
   "background": {
-    "scripts": ["src/utilites.js", "src/background_script.js"]
+    "scripts": ["lib/build/background_script_bundle.js"]
   },
 
   "commands": {

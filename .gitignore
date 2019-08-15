@@ -1,5 +1,10 @@
+## Browser extension related ##
 
+# generated js files, source files in src folder
 
-## Companion app related
+firefox_extension/lib
+firefox_extension/node_modules
+
+## Companion app related ##
 
 xcuserdata/

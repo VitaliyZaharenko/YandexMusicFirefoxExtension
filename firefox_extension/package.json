@@ -1,0 +1,21 @@
+{
+  "name": "universal_music_player_web_extension",
+  "main": "",
+  "version": "0.0.0",
+  "description": "Module For Universal Music Player Web Extension",
+  "keywords": [],
+  "repository": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/firefox-webext-browser": "^67.0.2",
+    "browserify": "^16.5.0",
+    "del": "^4.1.1",
+    "gulp": "^4.0.2",
+    "gulp-debug": "^4.0.0",
+    "gulp-typescript": "^5.0.1",
+    "madge": "^3.4.4",
+    "node-notifier": "^5.4.0",
+    "typescript": "^3.5.3",
+    "vinyl-source-stream": "^2.0.0"
+  }
+}

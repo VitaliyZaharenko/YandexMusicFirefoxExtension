@@ -1,3 +1,5 @@
+import { PlayerCapabilities } from "../player/capabilities"
+
 
 var yandexPrevSongElement = null
 var yandexNextSongElement = null
@@ -85,3 +87,6 @@ function playerNext(sendResponse){
 function playerIsActive(sendResponse){
   sendResponse({ type: "contentScriptResponse", msg: "SUCCESS" })
 }
+
+// script return value
+undefined
