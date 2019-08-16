@@ -62,3 +62,7 @@ gulp.task('clean', async function() {
 gulp.task('watch', async function() {
   gulp.watch('src/**/*.ts', gulp.series('compile:ts'))
 })
+
+gulp.task('watch:all', async function() {
+  gulp.watch('src/**/*.ts', gulp.series('build'))
+})

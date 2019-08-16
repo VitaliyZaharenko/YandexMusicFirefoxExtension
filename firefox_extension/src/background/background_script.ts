@@ -1,32 +1,37 @@
 import { PlayerCapabilities } from '../player/capabilities'
+import { 
+  RemoteMessageIdentity,
+  RemoteSender, RemoteReceiver,
+  BasicSender, TabSender,
+  BasicReceiver,
+  RemoteIdentity
+} from "../common/remote_message"
 
-showMessage("From background script", "")
+import { BaseViewInterface, ConsoleView } from "../common/console_view"
+import { PlayerClientInterface } from '../player/player_interface';
+import { RemotePlayerClient } from '../players/remote_player_client'
+import { BackgroundScriptCommandDispatcher } from '../dispatchers/command_dispatcher'
 
+let view: BaseViewInterface = new ConsoleView()
+let receiver: RemoteReceiver = new BasicReceiver()
+let selfAgent: RemoteIdentity = RemoteMessageIdentity.backgroundScript
+let commandDispatcher = new BackgroundScriptCommandDispatcher(view, function(){
+  console.log("request to run native app")
+})
+
+receiver.register(function(message, sendResponse) {
+  let body = message.message
+  console.log(body)
+})
+
+let playerClient: PlayerClientInterface
 
 var port = null
 
-browser.runtime.onMessage.addListener(function(message, sender, sendResponse){
-  if(message.type == "background"){
-    handleBackgroundAction(message.action, sendResponse)
-  }
-  if(message.type == "backgroundLog"){
-    let sender = message.from || "SenderNotSet"
-    showMessage(message.msg, `Message(${sender}): \n`)
-  }
-})
-
 
 executeHookScriptOnYandexTab((success) => {
-  showMessage(success, "from content script")
 }, (error) => {
-  showError(error, "from content script")
 })
-
-browser.commands.onCommand.addListener(function(command) {
-  let handler = commandHandlerMap[command] || unknownCommand
-  handler(command)
-});
-
 
 function handleBackgroundAction(action, sendResponse){
   if(action == "playerIsActive"){
@@ -91,7 +96,18 @@ function executeHookScriptOnYandexTab(onSuccess, onError){
     let executePromise2 = browser.tabs.executeScript(tab.id, { file: "lib/build/yandex_music_content_script_bundle.js" })
     executePromise2.then((success) => {
       showMessage("Content script injected")
-    }, onError)
+
+    }, onError).finally(function(){
+      let sender = new TabSender(tab.id)
+      playerClient = new RemotePlayerClient(selfAgent, sender)
+      commandDispatcher.playerClient = playerClient
+      playerClient.getCapabilities().then(function(capabilites){
+        
+      }).catch(function(error){
+        console.log("-------------error--------")
+        console.log(error)
+      })
+    })
   })
 }
 
@@ -110,19 +126,6 @@ function handleYandexMusicTab(tab){
     return
   }
   browser.tabs.update(tab.id, { active: true })
-}
-
-const commandHandlerMap = {
-  "prev-track-command": playerPrev,
-  "next-track-command": playerNext,
-  "play-pause-command": playerPlayPause,
-  "run-native-app-command": runNativeApp,
-  "send-to-native-app-command": sendMessageToNativeApp
-}
-
-
-function unknownCommand(command){
-  console.log("unknown command: " + command)
 }
 
 function injectIfNotActiveAndSend(actionFunction){
@@ -164,6 +167,7 @@ function sendToPlayer(action, onSuccess?, onError?){
     if(tabs.length == 0){
       onError("No Yandex Music Tabs")
     } else {
+
       browser.tabs.sendMessage(tabs[0].id, { type: "playerControl", action: action} ).then((response) => {
         if(onSuccess){
           onSuccess(response)
@@ -203,27 +207,4 @@ function runNativeApp() {
       console.log(`Disconnected due to an error: ${p.error.message}`);
     }
   });
-}
-
-function sendMessageToNativeApp(message){
-  port.postMessage(message || "Test debug message!");
-}
-
-
-// script as view
-
-function showError(error, includePrefix = "Error(bg): \n"){
-  if(includePrefix){
-    console.log(includePrefix + error)
-  } else {
-    console.log(error)
-  }
-}
-
-function showMessage(message, includePrefix = "Message(bg): \n"){
-  if(includePrefix){
-    console.log(includePrefix + message)
-  } else {
-    console.log(message)
-  }
 }
