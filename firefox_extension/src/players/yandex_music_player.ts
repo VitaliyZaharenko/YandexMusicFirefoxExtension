@@ -4,15 +4,13 @@ import { PlayerInterface, Result } from '../player/player_interface'
 
 export { YandexMusicPlayer } 
 
-class YandexMusicPlayer implements PlayerSourceInterface, PlayerInterface {
-
-    urlPattern = "https://music.yandex.ru/*"
+class YandexMusicPlayer implements  PlayerInterface {
 
     capabilities: PlayerCapabilities = new Set<PlayerCapability>()
 
     attach(document: Document): PlayerCapabilities {
         this.document = document
-        
+
         let capabilities = new Set<PlayerCapability>()
 
         this.prevSongElem = document.querySelector(".player-controls__btn_prev")
@@ -26,8 +24,7 @@ class YandexMusicPlayer implements PlayerSourceInterface, PlayerInterface {
         this.playPauseElem = document.querySelector(".player-controls__btn_pause") ||
                            document.querySelector(".player-controls__btn_play")
         if (this.playPauseElem) {
-            capabilities.add(PlayerCapability.Play)
-            capabilities.add(PlayerCapability.Pause)
+            capabilities.add(PlayerCapability.TogglePlaying)
         }
         //this.trackTitle = document.querySelector(".track__title")
 
@@ -37,7 +34,7 @@ class YandexMusicPlayer implements PlayerSourceInterface, PlayerInterface {
 
     provide(capability: PlayerCapability): Result {
         switch (capability) {
-            case PlayerCapability.Play, PlayerCapability.Pause:
+            case PlayerCapability.TogglePlaying:
                 this.playPauseElem.click()
                 return "Success"
             case PlayerCapability.PreviousTrack:

@@ -2,6 +2,6 @@
 export { BaseViewInterface }
 
 interface BaseViewInterface {
-    showMessage: (message: string) => void
-    showError: (error: string) => void 
+    showMessage: (message: any) => void
+    showError: (error: any) => void 
 }

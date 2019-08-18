@@ -1,9 +1,20 @@
 import { RemoteSender, RemoteMessage } from "./remote_message";
 
-export { MessageDispatcher }
+export { MessageDispatcher, MessageReceiver }
 
 interface MessageDispatcher {
-    sender: RemoteSender
+
+    registeredReceivers: Array<MessageReceiver>
+
+    addReceiver(receiver: MessageReceiver)
+    removeReceiver(receiver: MessageReceiver)
+
     dispatch: (message: RemoteMessage, sendResponse: (message: RemoteMessage) => void) => void
+}
+
+
+interface MessageReceiver {
+
+    onReceive: (message: RemoteMessage) => RemoteMessage | null
 }
 

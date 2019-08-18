@@ -1,4 +1,4 @@
-import { MessageDispatcher } from '../common/message_broker'
+import { MessageDispatcher, MessageReceiver } from '../common/message_broker'
 import { RemoteSender, RemoteMessage, RemoteMessageType, RemoteIdentity } from '../common/remote_message';
 import { BaseViewInterface } from '../common/console_view';
 import { 
@@ -24,6 +24,20 @@ class ContentScriptDispatcher implements MessageDispatcher {
         this.sender = sender
         this.view = view
         this.player = player
+    }
+
+
+    addReceiver(receiver: MessageReceiver) { 
+        // NOT USED
+    }
+
+    removeReceiver(receiver: MessageReceiver) {
+        // NOT USED
+    }
+
+    get registeredReceivers(): Array<MessageReceiver> {
+        // NOT USED
+        return []
     }
 
     dispatch(message: RemoteMessage, sendResponse: (message: RemoteMessage) => void) {

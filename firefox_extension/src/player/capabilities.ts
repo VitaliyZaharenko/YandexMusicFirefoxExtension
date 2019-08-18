@@ -1,8 +1,7 @@
 export { PlayerCapability, PlayerCapabilities };
 
 enum PlayerCapability {
-    Play = "Play",
-    Pause = "Pause",
+    TogglePlaying = "TogglePlaying",
     PlayingStatus = "PlayingStatus",
     StepForward = "StepForward",
     StepBack = "StepBack",

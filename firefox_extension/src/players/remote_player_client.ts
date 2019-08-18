@@ -7,7 +7,9 @@ import {
     PlayerResultRemoteMessage, PlayerResultMessage, PlayerCapabilitiesResultMessage, GetCapabilitiesMessage
 } from '../player/player_interface'
 
-export { RemotePlayerClient }
+import { MessageReceiver } from '../common/message_broker'
+
+export { RemotePlayerClient, RemotePlayerClientForwarder }
 
 class RemotePlayerClient implements PlayerClientInterface {
 
@@ -51,4 +53,53 @@ class RemotePlayerClient implements PlayerClientInterface {
         return result
     }
 
+}
+
+
+class RemotePlayerClientForwarder implements MessageReceiver {
+
+    constructor(
+        private agent: RemoteIdentity,
+        private forwardClient: RemoteIdentity,
+        private remoteClient: PlayerClientInterface
+        ) {
+    }
+
+
+    onReceive(message: RemoteMessage): RemoteMessage | null {
+        if (!this.isConsumed(message)) { return null }
+        
+        let playerMessage = message.message as PlayerRemoteMessage
+        switch (playerMessage.type) {
+            case "ProvideCapability":
+                let capability = playerMessage.capability
+                this.remoteClient.provide(capability)
+                
+                let result: PlayerResultRemoteMessage = {
+                    type: "PlayerResult",
+                    result: "Success"
+                }
+                let message: RemoteMessage = {
+                    messageType: RemoteMessageType.PlayerResult,
+                    sender: this.agent,
+                    message: result
+                }
+                return message
+            case "GetCapabilities":
+                // not implemented
+                return {
+                    messageType: RemoteMessageType.ConsumedEmptyResponse,
+                    message: {}
+                }
+        }
+    }
+
+    private isConsumed(message: RemoteMessage): boolean {
+        if(!message.sender) { return false }
+        let senderId = message.sender.id
+        if (senderId != this.forwardClient.id) { return false }
+
+        if (message.messageType != RemoteMessageType.PlayerControl) { return false }
+        return true
+    } 
 }

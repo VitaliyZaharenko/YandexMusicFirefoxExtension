@@ -13,7 +13,10 @@ export {
 enum RemoteMessageType {
     Debug = "Debug",
     PlayerControl = "PlayerControl",
-    PlayerResult = "PlayerResult"
+    PlayerResult = "PlayerResult",
+    ConsumedEmptyResponse = "ConsumedEmptyResponse",
+    GlobalService = "GlobalService",
+    GlobalServiceResult = "GlobalServiceResult"
 }
 
 type OnRemoteMessageCallback = (message: RemoteMessage, sendResponse: (response?: RemoteMessage) => void) => void
