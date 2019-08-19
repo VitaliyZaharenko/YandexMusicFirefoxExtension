@@ -17,5 +17,8 @@
     "node-notifier": "^5.4.0",
     "typescript": "^3.5.3",
     "vinyl-source-stream": "^2.0.0"
+  },
+  "dependencies": {
+    "uuid": "^3.3.3"
   }
 }

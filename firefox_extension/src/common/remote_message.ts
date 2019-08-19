@@ -11,6 +11,8 @@ export {
 }
 
 enum RemoteMessageType {
+    ChannelMessage = "ChannelMessage",
+    Error = "Error",
     Debug = "Debug",
     PlayerControl = "PlayerControl",
     PlayerResult = "PlayerResult",
@@ -18,6 +20,7 @@ enum RemoteMessageType {
     GlobalService = "GlobalService",
     GlobalServiceResult = "GlobalServiceResult"
 }
+
 
 type OnRemoteMessageCallback = (message: RemoteMessage, sendResponse: (response?: RemoteMessage) => void) => void
 

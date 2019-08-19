@@ -4,11 +4,12 @@ export { ConsoleView, BaseViewInterface }
 
 class ConsoleView implements BaseViewInterface {
 
-    showError(message: string) {
-        console.log("error: \n" + message)
+    showError(error: any) {
+        console.log("error: \n")
+        console.log(error)
     }
 
-    showMessage(message: string) {
+    showMessage(message: any) {
         console.log(message)
     }
 }

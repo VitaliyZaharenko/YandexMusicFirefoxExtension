@@ -12,6 +12,8 @@ import {
     BasicSender, TabSender,
     BasicReceiver
 } from "../common/remote_message"
+import { MessageChannelClient, MessageChannelServer } from "../common/message_channel";
+import { RemotePlayerServer } from '../players/remote_player'
 
 let view: BaseViewInterface = new ConsoleView()
 let selfAgent = new RemoteMessageIdentity("YandexMusicContentScript")
@@ -19,6 +21,14 @@ let sender = new BasicSender()
 let player: PlayerInterface = new YandexMusicPlayer()
 player.attach(document)
 let dispatcher = new ContentScriptDispatcher(selfAgent, sender, view, player)
+let channelClient = new MessageChannelClient(sender, "content->background")
+let channelServer = new MessageChannelServer(sender, "content<-background", view)
+dispatcher.addReceiver(channelClient)
+dispatcher.addReceiver(channelServer)
+
+let playerServer = new RemotePlayerServer(player)
+channelServer.addConsumer(playerServer)
+
 
 let receiver = new BasicReceiver()
 receiver.register(function(message, sendResponse){

@@ -1,4 +1,3 @@
-import { RemotePlayerClient } from "../players/remote_player_client";
 import { PlayerClientInterface } from '../player/player_interface'
 import { PlayerCapabilities, PlayerCapability } from "../player/capabilities";
 import { GlobalServicesProviderInterface } from "../common/global_services";
@@ -23,7 +22,6 @@ class PlayerClientUI implements BaseViewInterface {
         private globalServiceProvider: GlobalServicesProviderInterface,
     ){  
     }
-
 
     attach(document: Document) {
 
@@ -89,10 +87,10 @@ class PlayerClientUI implements BaseViewInterface {
         this.messageElement.textContent = text;
         this.messageElement.style.display = "block";
       
-        setTimeout(function() {
+        setTimeout(() => {
           this.messageElement.className = ""
           this.messageElement.textContent = "";
           this.messageElement.style.display = "none";
-        }, 1)
+        }, 1000 * 2)
     }
 }

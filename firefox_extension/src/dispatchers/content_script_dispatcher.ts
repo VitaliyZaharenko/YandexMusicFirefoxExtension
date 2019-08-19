@@ -3,93 +3,43 @@ import { RemoteSender, RemoteMessage, RemoteMessageType, RemoteIdentity } from '
 import { BaseViewInterface } from '../common/console_view';
 import { 
     PlayerInterface, 
-    Result, 
     PlayerRemoteMessage, ProvideCapabilityMessage,
     PlayerResultRemoteMessage, PlayerResultMessage, PlayerCapabilitiesResultMessage
 } from '../player/player_interface'
 
-import { PlayerCapability } from '../player/capabilities';
+import { BasicDispatcher } from './basic_dispatcher';
 
 export { ContentScriptDispatcher }
 
-class ContentScriptDispatcher implements MessageDispatcher {
+class ContentScriptDispatcher extends BasicDispatcher {
 
-    agent: RemoteIdentity
-    sender: RemoteSender
-    view: BaseViewInterface
-    player: PlayerInterface
-
-    constructor(agent: RemoteIdentity, sender: RemoteSender, view: BaseViewInterface, player: PlayerInterface) {
-        this.agent = agent
-        this.sender = sender
-        this.view = view
-        this.player = player
+    constructor(
+        public agent: RemoteIdentity, 
+        private sender: RemoteSender, 
+        private view: BaseViewInterface, 
+        private player: PlayerInterface) {
+        
+        super(agent)
     }
 
+    dispatch(message: RemoteMessage, sendResponse: (message: RemoteMessage) => void): boolean {
+        let consumed = super.dispatch(message, sendResponse)
+        if (consumed) { return true }
 
-    addReceiver(receiver: MessageReceiver) { 
-        // NOT USED
-    }
-
-    removeReceiver(receiver: MessageReceiver) {
-        // NOT USED
-    }
-
-    get registeredReceivers(): Array<MessageReceiver> {
-        // NOT USED
-        return []
-    }
-
-    dispatch(message: RemoteMessage, sendResponse: (message: RemoteMessage) => void) {
         switch (message.messageType) {
             case RemoteMessageType.Debug:
                 this.handleDebug(message)
-                break
-            case RemoteMessageType.PlayerControl:
-                this.handlePlayer(message.message as PlayerRemoteMessage, sendResponse)
-                break
+                return true
             default:
                 this.handleUnknown(message)
-                break
+                return true
         }
     }
 
     private handleDebug(message: RemoteMessage) {
         this.view.showMessage(message.message.toString())
     }
-
-    private handlePlayer(message: PlayerRemoteMessage, sendResponse) {
-
-        switch (message.type) {
-        case "ProvideCapability": 
-            let capability = message.capability
-            let result = this.player.provide(capability)
-
-            let provideResponse: PlayerResultRemoteMessage = {
-                type: "PlayerResult",
-                result: result
-            }
-
-            sendResponse({
-                messageType: RemoteMessageType.PlayerResult,
-                from: this.agent,
-                message: provideResponse
-            })
-            break;
-        case "GetCapabilities":
-            let capabilities = this.player.capabilities
-            let capabilitiesResponse: PlayerResultRemoteMessage = {
-                type: "PlayerCapabilitiesResult",
-                result: capabilities
-            }
-            sendResponse({
-                messageType: RemoteMessageType.PlayerResult,
-                from: this.agent,
-                message: capabilitiesResponse
-            })
-        }
-    }
-
+    
     private handleUnknown(message: RemoteMessage) {
         this.view.showError("Unknown Message type")
         this.view.showError(message.message.toString())

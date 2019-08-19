@@ -9,7 +9,7 @@ interface MessageDispatcher {
     addReceiver(receiver: MessageReceiver)
     removeReceiver(receiver: MessageReceiver)
 
-    dispatch: (message: RemoteMessage, sendResponse: (message: RemoteMessage) => void) => void
+    dispatch: (message: RemoteMessage, sendResponse: (message: RemoteMessage) => void) => boolean
 }
 
 
