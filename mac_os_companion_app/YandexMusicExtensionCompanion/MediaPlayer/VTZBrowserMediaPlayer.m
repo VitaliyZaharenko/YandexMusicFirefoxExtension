@@ -1,14 +1,14 @@
 //Created by vzakharenko
 
 #import <Foundation/Foundation.h>
+
+// project
 #import "VTZBrowserMediaPlayer.h"
 #import "VTZUtils.h"
+#import "VTZPlayerCapability.h"
+#import "VTZRemoteMessage.h"
 
 @implementation VTZBrowserMediaPlayer
-
-static NSString* NEXT = @"next";
-static NSString* PREV = @"prev";
-static NSString* PLAY_PAUSE = @"playPause";
 
 dispatch_queue_t serialQueue;
 
@@ -28,22 +28,22 @@ dispatch_queue_t serialQueue;
 
 - (void)next {
     dispatch_async(serialQueue, ^{
-        NSString* json = [self createControlJsonWithAction:NEXT];
-        [VTZUtils writeToStdout:json];
+        VTZRemoteMessage* message = [VTZRemoteMessage playerControlWithCapability:VTZPlayerCapabilityNextTrack];
+        [VTZUtils writeToStdout:[message toJsonString]];
     });
 }
 
 - (void)playPause {
     dispatch_async(serialQueue, ^{
-        NSString* json = [self createControlJsonWithAction:PLAY_PAUSE];
-        [VTZUtils writeToStdout:json];
+        VTZRemoteMessage* message = [VTZRemoteMessage playerControlWithCapability:VTZPlayerCapabilityTogglePlaying];
+        [VTZUtils writeToStdout:[message toJsonString]];
     });
 }
 
 - (void)prev {
     dispatch_async(serialQueue, ^{
-        NSString* json = [self createControlJsonWithAction:PREV];
-        [VTZUtils writeToStdout:json];
+        VTZRemoteMessage* message = [VTZRemoteMessage playerControlWithCapability:VTZPlayerCapabilityPrevTrack];
+        [VTZUtils writeToStdout:[message toJsonString]];
     });
 }
 
@@ -52,12 +52,5 @@ dispatch_queue_t serialQueue;
     return @"";
 }
 
-
-# pragma mark - Private Helper Methods
-
-- (NSString *) createControlJsonWithAction: (NSString*) action {
-    NSString * jsonTemplate = @"{ \"action\": \"%@\" }";
-    return [NSString stringWithFormat:jsonTemplate, action];
-}
 
 @end

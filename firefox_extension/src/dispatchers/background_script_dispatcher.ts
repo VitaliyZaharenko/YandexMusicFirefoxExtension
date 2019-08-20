@@ -4,11 +4,6 @@ import { ActivePlayerManagerInterface } from '../players/active_player_manager';
 import { BaseViewInterface } from '../common/base_view_interface'
 import { BasicDispatcher } from '../dispatchers/basic_dispatcher'
 
-import { 
-    PlayerClientInterface, 
-    PlayerRemoteMessage, ProvideCapabilityMessage,
-} from '../player/player_interface'
-
 export { BackgroundScriptDispatcher }
 
 class BackgroundScriptDispatcher extends BasicDispatcher {

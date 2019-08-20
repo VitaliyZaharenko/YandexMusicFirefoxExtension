@@ -3,14 +3,15 @@ import { MessageConsumerInterface, MessageChannelClient } from "../common/messag
 import { 
     PlayerInterface, 
     Result, 
-    PlayerRemoteMessage, ProvideCapabilityMessage,
-    PlayerResultRemoteMessage, PlayerResultMessage, PlayerCapabilitiesResultMessage
+    PlayerRemoteMessage, 
+    PlayerResultRemoteMessage, 
 } from '../player/player_interface'
 import { RemoteMessage, RemoteMessageType } from "../common/remote_message"
 import { PlayerCapability, PlayerCapabilities } from "../player/capabilities"
 import { PlayerClientInterface } from '../player/player_interface'
+import { MessageReceiver } from "../common/message_broker";
 
-export { RemotePlayerServer, RemotePlayerClient, RemotePlayerForwarder }
+export { RemotePlayerServer, RemotePlayerClient, RemotePlayerForwarder, RemotePlayerForwarderReceiverStyle }
 
 class RemotePlayerServer implements MessageConsumerInterface {
     
@@ -140,5 +141,32 @@ class RemotePlayerForwarder implements MessageConsumerInterface {
             message: capabilitiesResponse
         }
         return message
+    }
+}
+
+class RemotePlayerForwarderReceiverStyle implements MessageReceiver {
+
+    constructor(private playerClient: PlayerClientInterface) { }
+
+    onReceive(message: RemoteMessage): RemoteMessage | null {
+        if (message.messageType != RemoteMessageType.PlayerControl) { return null }
+        let playerMessage = message.message as PlayerRemoteMessage
+        switch(playerMessage.type) {
+            case "GetCapabilities": 
+                // NOT USED
+                let result: RemoteMessage = {
+                    messageType: RemoteMessageType.ConsumedEmptyResponse,
+                    message: {}
+                }
+                return result
+            case "ProvideCapability":
+                let capability = playerMessage.capability
+                this.playerClient.provide(capability)
+                let resultProvide: RemoteMessage = {
+                    messageType: RemoteMessageType.ConsumedEmptyResponse,
+                    message: {}
+                }
+                return resultProvide
+        }
     }
 }

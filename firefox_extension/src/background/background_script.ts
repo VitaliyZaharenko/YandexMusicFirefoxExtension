@@ -5,8 +5,8 @@ import {
   BasicSender, TabSender,
   BasicReceiver,
   RemoteIdentity,
-  RemoteMessage,
-  RemoteMessageType
+  NativeSender,
+  FromNativeReceiver
 } from "../common/remote_message"
 
 import { BaseViewInterface, ConsoleView } from "../common/console_view"
@@ -18,14 +18,14 @@ import { MessageDispatcher } from '../common/message_broker'
 import { TabsManager } from '../common/tabs_manager';
 import { GlobalServicesProviderServer } from '../providers/global_services'
 import { MessageChannelServer, MessageConsumerInterface, MessageChannelClient } from '../common/message_channel';
-import { RemotePlayerClient, RemotePlayerForwarder } from '../players/remote_player';
+import { RemotePlayerClient, RemotePlayerForwarder, RemotePlayerForwarderReceiverStyle } from '../players/remote_player';
 
 let view: BaseViewInterface = new ConsoleView()
 let receiver: RemoteReceiver = new BasicReceiver()
 let selfAgent: RemoteIdentity = RemoteMessageIdentity.backgroundScript
 let playerManager: ActivePlayerManagerInterface = new ActivePlayerManager()
 let commandDispatcher = new BackgroundScriptCommandDispatcher(view, playerManager, function(){
-  console.log("request to run native app")
+  runNativeApp()
 })
 let tabManager = new TabsManager()
 let globalServices = new GlobalServicesProviderServer(selfAgent, tabManager)
@@ -40,15 +40,14 @@ dispatcher.addReceiver(toolbarChannelClient)
 dispatcher.addReceiver(globalServices)
 
 
-
 receiver.register(function(message, sendResponse) {
   dispatcher.dispatch(message, sendResponse)
 })
 
 let playerClient: PlayerClientInterface
 let playerForwarder: RemotePlayerForwarder
+let nativeAppPlayerForwarder
 
-var port = null
 
 tabManager.scanTabs().then(() => {
   
@@ -75,30 +74,25 @@ function registerSupportObjects(tabId) {
   dispatcher.addReceiver(contentChannelClient)
   playerForwarder = new RemotePlayerForwarder(playerClient)
   toolbarChannelServer.addConsumer(playerForwarder)
+  nativeAppPlayerForwarder = new RemotePlayerForwarderReceiverStyle(playerManager.active)
+  dispatcher.addReceiver(nativeAppPlayerForwarder)
 }
 
 async function executeContentScript(tabId) {
   try {
     await browser.tabs.executeScript(tabId, { file: "lib/build/yandex_music_content_script_bundle.js" })
-  } catch (e) {} 
+  } catch (e) { } 
 }
 
 
 function runNativeApp() {
   console.log("running native app");
-  port = browser.runtime.connectNative("yandex_music_ui");
-  port.onMessage.addListener((response) => {
-
-
-    try {
-      let message = response as RemoteMessage
-      dispatcher.dispatch(message, (unused)=> {})
-    } catch (e) {
-      view.showError("Unknown response from native app")
-      view.showError(response)
-      view.showError(e)
-    }
-  });
+  let port = browser.runtime.connectNative("yandex_music_ui");
+  let nativeSender = new NativeSender(port)
+  let nativeReceiver = new FromNativeReceiver(port)
+  nativeReceiver.register((message, notUsed) => {
+    dispatcher.dispatch(message, notUsed)
+  })
   port.onDisconnect.addListener((p) => {
     if (p.error) {
       view.showError(`Disconnected due to an error: ${p.error.message}`);

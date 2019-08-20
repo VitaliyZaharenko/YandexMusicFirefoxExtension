@@ -6,12 +6,13 @@ export {
     RemoteMessageIdentity,
     OnRemoteMessageCallback,
     RemoteSender, RemoteReceiver,
-    BasicSender, TabSender,
-    BasicReceiver
+    BasicSender, TabSender, NativeSender,
+    BasicReceiver, FromNativeReceiver
 }
 
 enum RemoteMessageType {
     ChannelMessage = "ChannelMessage",
+    NativeNoResult = "NativeNoResult",
     Error = "Error",
     Debug = "Debug",
     PlayerControl = "PlayerControl",
@@ -61,6 +62,18 @@ class BasicReceiver implements RemoteReceiver {
     }
 }
 
+class FromNativeReceiver implements RemoteReceiver {
+
+    constructor(private port: browser.runtime.Port) {
+
+    }
+    register(onRemoteMessage: OnRemoteMessageCallback) {
+        this.port.onMessage.addListener((message) => {
+            onRemoteMessage(message as RemoteMessage, null)
+        })
+    }
+}
+
 class BasicSender implements RemoteSender {
     send(message: RemoteMessage): Promise<RemoteMessage> {
         return browser.runtime.sendMessage(message)
@@ -71,5 +84,20 @@ class TabSender implements RemoteSender {
     constructor(private tabId: number) {}
     send(message: RemoteMessage): Promise<RemoteMessage> {
         return browser.tabs.sendMessage(this.tabId, message)
+    }
+}
+
+class NativeSender implements RemoteSender {
+
+    constructor(private port: browser.runtime.Port) {
+    }
+
+    async send(message: RemoteMessage): Promise<RemoteMessage> {
+        this.port.postMessage(message)
+        let result: RemoteMessage = {
+            messageType: RemoteMessageType.NativeNoResult,
+            message: "No result from onPost to native port message"
+        }
+        return result
     }
 }
