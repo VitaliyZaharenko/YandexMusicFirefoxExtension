@@ -1,19 +1,21 @@
-import { PlayerCapabilities } from "../player/capabilities"
-import { PlayerInterface } from "../player/player_interface";
-import { YandexMusicPlayer } from "../players/yandex_music_player";
-import { BaseViewInterface, ConsoleView } from "../common/console_view"
-import { ContentScriptDispatcher } from "../dispatchers/content_script_dispatcher"
-
-import {
-    RemoteMessage, 
-    RemoteMessageType, 
+import { 
+    PlayerInterface 
+} from "../player"
+import { 
+    YandexMusicPlayer, 
+    RemotePlayerServer
+} from "../players";
+import { 
+    BaseViewInterface, ConsoleView,
     RemoteMessageIdentity,
-    RemoteSender, RemoteReceiver,
-    BasicSender, TabSender,
-    BasicReceiver
-} from "../common/remote_message"
-import { MessageChannelClient, MessageChannelServer } from "../common/message_channel";
-import { RemotePlayerServer } from '../players/remote_player'
+    BasicSender,
+    BasicReceiver,
+    MessageChannelClient, MessageChannelServer
+} from "../common"
+import { 
+    ContentScriptDispatcher 
+} from "../dispatchers"
+
 
 let view: BaseViewInterface = new ConsoleView()
 let selfAgent = new RemoteMessageIdentity("YandexMusicContentScript")

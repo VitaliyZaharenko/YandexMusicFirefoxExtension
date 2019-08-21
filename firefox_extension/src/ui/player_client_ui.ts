@@ -1,5 +1,9 @@
-import { PlayerClientInterface } from '../player/player_interface'
-import { PlayerCapabilities, PlayerCapability } from "../player/capabilities";
+import { 
+    PlayerClientInterface,
+    PlayerCapabilities, 
+    PlayerCapability
+} from '../player'
+
 import { GlobalServicesProviderInterface } from "../common/global_services";
 import { BaseViewInterface } from "../common/console_view";
 

@@ -1,4 +1,6 @@
-import { PlayerCapabilities } from '../player/capabilities'
+import { 
+  PlayerCapabilities, PlayerClientInterface,
+ } from '../player'
 import { 
   RemoteMessageIdentity,
   RemoteSender, RemoteReceiver,
@@ -6,19 +8,23 @@ import {
   BasicReceiver,
   RemoteIdentity,
   NativeSender,
-  FromNativeReceiver
-} from "../common/remote_message"
-
-import { BaseViewInterface, ConsoleView } from "../common/console_view"
-import { PlayerClientInterface } from '../player/player_interface';
-import { BackgroundScriptCommandDispatcher } from '../dispatchers/command_dispatcher'
-import { BackgroundScriptDispatcher } from '../dispatchers/background_script_dispatcher'
-import { ActivePlayerManagerInterface, ActivePlayerManager } from '../players/active_player_manager'
-import { MessageDispatcher } from '../common/message_broker'
-import { TabsManager } from '../common/tabs_manager';
-import { GlobalServicesProviderServer } from '../providers/global_services'
-import { MessageChannelServer, MessageConsumerInterface, MessageChannelClient } from '../common/message_channel';
-import { RemotePlayerClient, RemotePlayerForwarder, RemotePlayerForwarderReceiverStyle } from '../players/remote_player';
+  FromNativeReceiver,
+  BaseViewInterface, ConsoleView,
+  MessageDispatcher,
+  TabsManager,
+  MessageChannelServer, MessageConsumerInterface, MessageChannelClient
+} from "../common"
+import {
+  RemotePlayerClient, RemotePlayerForwarder, RemotePlayerForwarderReceiverStyle,
+  ActivePlayerManagerInterface, ActivePlayerManager
+} from '../players'
+import {
+  BackgroundScriptCommandDispatcher,
+  BackgroundScriptDispatcher
+} from '../dispatchers'
+import { 
+  GlobalServicesProviderServer 
+} from '../providers'
 
 let view: BaseViewInterface = new ConsoleView()
 let receiver: RemoteReceiver = new BasicReceiver()

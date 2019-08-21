@@ -1,15 +1,16 @@
-import { MessageConsumerInterface, MessageChannelClient } from "../common/message_channel";
-
 import { 
     PlayerInterface, 
     Result, 
     PlayerRemoteMessage, 
     PlayerResultRemoteMessage, 
-} from '../player/player_interface'
-import { RemoteMessage, RemoteMessageType } from "../common/remote_message"
-import { PlayerCapability, PlayerCapabilities } from "../player/capabilities"
-import { PlayerClientInterface } from '../player/player_interface'
-import { MessageReceiver } from "../common/message_broker";
+    PlayerCapability, PlayerCapabilities,
+    PlayerClientInterface
+} from '../player'
+import { 
+    RemoteMessage, RemoteMessageType,
+    MessageReceiver,
+    MessageConsumerInterface, MessageChannelClient
+} from "../common"
 
 export { RemotePlayerServer, RemotePlayerClient, RemotePlayerForwarder, RemotePlayerForwarderReceiverStyle }
 

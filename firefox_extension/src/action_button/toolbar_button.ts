@@ -1,17 +1,25 @@
-import { PlayerClientUI } from '../ui/player_client_ui'
-import { ActionButtonScriptDispatcher } from '../dispatchers/action_button_dispatcher'
-import { MessageChannelClient, MessageChannelServer, MessageConsumerInterface } from '../common/message_channel'
-
+import { 
+  PlayerClientUI
+} from '../ui/player_client_ui'
+import { 
+  ActionButtonScriptDispatcher 
+} from '../dispatchers'
 import { 
   RemoteMessageIdentity,
-  RemoteIdentity,
   RemoteReceiver,
   BasicReceiver,
   BasicSender,
-} from "../common/remote_message"
-import { GlobalServicesProviderClient } from '../providers/global_services';
-import { PlayerCapability, PlayerCapabilities } from '../player/capabilities';
-import { RemotePlayerClient } from '../players/remote_player';
+  MessageChannelClient, MessageChannelServer, MessageConsumerInterface
+} from "../common"
+import {
+  PlayerCapability, PlayerCapabilities
+} from '../player'
+import { 
+  GlobalServicesProviderClient 
+} from '../providers';
+import { 
+  RemotePlayerClient 
+} from '../players';
 
 let selfAgent = new RemoteMessageIdentity("ToolbarButtonAgent")
 let sender = new BasicSender()
