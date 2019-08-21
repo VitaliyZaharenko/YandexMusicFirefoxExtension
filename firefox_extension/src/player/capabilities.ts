@@ -10,8 +10,8 @@ enum PlayerCapability {
     TrackInfo = "TrackInfo",
     TrackCoverImage = "TrackCoverImage",
     DurationStatus = "DurationStatus",
-    Like = "Like",
-    Dislike = "Dislike",
+    ToggleLike = "ToggleLike",
+    StrongDislike = "StrongDislike",
     Repeat = "Repeat"
 }
 

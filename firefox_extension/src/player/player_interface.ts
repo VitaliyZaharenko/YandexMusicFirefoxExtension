@@ -1,9 +1,10 @@
 
 import { PlayerCapabilities, PlayerCapability } from './capabilities'
+import { TrackDuration, TrackInfo } from './track_info';
 
 export { 
     Result, 
-    PlayerInterface, 
+    PlayerInterface, PlayerDelegateInterface,
     PlayerClientInterface, 
     PlayerRemoteMessage, ProvideCapabilityMessage, GetCapabilitiesMessage,
     PlayerResultRemoteMessage, PlayerResultMessage, PlayerCapabilitiesResultMessage
@@ -40,9 +41,18 @@ type PlayerResultRemoteMessage = PlayerResultMessage | PlayerCapabilitiesResultM
 interface PlayerInterface {
 
     capabilities: PlayerCapabilities
+    delegate?: PlayerDelegateInterface
 
     attach: (document: Document) => PlayerCapabilities
     provide: (capability: PlayerCapability) => Result
+}
+
+interface PlayerDelegateInterface {
+
+    durationStatusChanged(duration: TrackDuration)
+    playingStatusChanged(isPlaying: boolean)
+    trackInfoChanged(trackInfo: TrackInfo)
+    likeStatusChanged(isLiked: boolean)
 }
 
 interface PlayerClientInterface {
