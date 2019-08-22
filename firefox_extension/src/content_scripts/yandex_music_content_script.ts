@@ -1,9 +1,10 @@
 import { 
-    PlayerInterface 
+    PlayerInterface, PlayerCapability 
 } from "../player"
 import { 
     YandexMusicPlayer, 
-    RemotePlayerServer
+    RemotePlayerServer,
+    RemotePlayerDelegateSender,
 } from "../players";
 import { 
     BaseViewInterface, ConsoleView,
@@ -20,7 +21,15 @@ import {
 let view: BaseViewInterface = new ConsoleView()
 let selfAgent = new RemoteMessageIdentity("YandexMusicContentScript")
 let sender = new BasicSender()
-let player: PlayerInterface = new YandexMusicPlayer()
+let requestedCapabilities = new Set<PlayerCapability>([
+    PlayerCapability.NextTrack, PlayerCapability.PreviousTrack, PlayerCapability.TogglePlaying,
+    PlayerCapability.ToggleLike, PlayerCapability.StrongDislike,
+    PlayerCapability.DurationStatus, PlayerCapability.TrackInfo, PlayerCapability.LikeStatus, PlayerCapability.PlayingStatus,
+    PlayerCapability.StepBack, PlayerCapability.StepForward
+])
+let remoteDelegate = new RemotePlayerDelegateSender("content->background[PlayerStatus]", sender)
+let player: PlayerInterface = new YandexMusicPlayer(requestedCapabilities)
+player.delegate = remoteDelegate
 player.attach(document)
 let dispatcher = new ContentScriptDispatcher(selfAgent, sender, view, player)
 let channelClient = new MessageChannelClient(sender, "content->background")

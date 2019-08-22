@@ -12,6 +12,7 @@ enum PlayerCapability {
     DurationStatus = "DurationStatus",
     ToggleLike = "ToggleLike",
     StrongDislike = "StrongDislike",
+    LikeStatus = "LikeStatus",
     Repeat = "Repeat"
 }
 

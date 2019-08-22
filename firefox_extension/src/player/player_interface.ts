@@ -10,7 +10,7 @@ export {
     PlayerResultRemoteMessage, PlayerResultMessage, PlayerCapabilitiesResultMessage
 }
 
-type Result = "Success" | "Error"
+type Result = "Success" | "Error" | "NotSupported"
 
 
 interface ProvideCapabilityMessage {
@@ -49,10 +49,10 @@ interface PlayerInterface {
 
 interface PlayerDelegateInterface {
 
-    durationStatusChanged(duration: TrackDuration)
-    playingStatusChanged(isPlaying: boolean)
-    trackInfoChanged(trackInfo: TrackInfo)
-    likeStatusChanged(isLiked: boolean)
+    durationStatusUpdate(duration: TrackDuration)
+    playingStatusUpdate(isPlaying: boolean)
+    trackInfoUpdate(trackInfo: TrackInfo)
+    likeStatusUpdate(isLiked: boolean)
 }
 
 interface PlayerClientInterface {

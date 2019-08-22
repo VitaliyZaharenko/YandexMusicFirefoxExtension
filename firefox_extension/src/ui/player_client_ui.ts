@@ -1,22 +1,36 @@
 import { 
     PlayerClientInterface,
     PlayerCapabilities, 
-    PlayerCapability
+    PlayerCapability,
+    PlayerDelegateInterface,
+    TrackDuration,
+    TrackInfo
 } from '../player'
 
-import { GlobalServicesProviderInterface } from "../common/global_services";
-import { BaseViewInterface } from "../common/console_view";
+import { 
+    GlobalServicesProviderInterface,
+    BaseViewInterface
+} from "../common";
 
 export { PlayerClientUI }
 
-class PlayerClientUI implements BaseViewInterface {
-
+class PlayerClientUI implements BaseViewInterface, PlayerDelegateInterface {
+    
     private messageElement: HTMLElement
     private titleElement: HTMLElement
     private prevButton: HTMLElement
     private playPauseButton: HTMLElement
     private nextButton: HTMLElement
+    private stepBackButton: HTMLElement
+    private stepForwardButton: HTMLElement
+    private toggleLikeButton: HTMLElement
+    private dislikeButton: HTMLElement
+    private progressBar: HTMLElement
     private switchToPlayerButton: HTMLElement
+
+    private dislikePreventSingleClick = false
+    private timer;
+    private CLICK_DELAY = 200;
 
     document: Document
 
@@ -33,13 +47,24 @@ class PlayerClientUI implements BaseViewInterface {
         this.messageElement = document.querySelector("#message-ui");
         this.titleElement = document.querySelector("#song-title");
         this.prevButton = document.querySelector("#prev-song");
-        this.prevButton.addEventListener("click", this.handlePrevSongClick.bind(this));
-        this.playPauseButton = document.querySelector("#play-pause");
-        this.playPauseButton.addEventListener("click", this.handlePlayPauseClick.bind(this));
         this.nextButton = document.querySelector("#next-song");
-        this.nextButton.addEventListener("click", this.handleNextSongClick.bind(this));
+        this.playPauseButton = document.querySelector("#play-pause");
+        this.stepBackButton = document.querySelector("#step-back")
+        this.stepForwardButton = document.querySelector("#step-forward")
+        this.toggleLikeButton = document.querySelector("#toggle-like")
+        this.dislikeButton = document.querySelector("#dislike")
+        this.progressBar = document.querySelector("#progress-bar")
         this.switchToPlayerButton = document.querySelector("#switch-to-player-tab");
+        this.prevButton.addEventListener("click", this.handleCapabilityClick.bind(this, PlayerCapability.PreviousTrack));
+        this.playPauseButton.addEventListener("click", this.handleCapabilityClick.bind(this, PlayerCapability.TogglePlaying));
+        this.nextButton.addEventListener("click", this.handleCapabilityClick.bind(this, PlayerCapability.NextTrack));
+        this.stepBackButton.addEventListener('click', this.handleCapabilityClick.bind(this, PlayerCapability.StepBack))
+        this.stepForwardButton.addEventListener('click', this.handleCapabilityClick.bind(this, PlayerCapability.StepForward))
+        this.toggleLikeButton.addEventListener('click', this.handleCapabilityClick.bind(this, PlayerCapability.ToggleLike))
         this.switchToPlayerButton.addEventListener("click", this.handleSwitchToPlayerClick.bind(this));
+        this.dislikeButton.addEventListener('click', this.handleDislikeSingleClick.bind(this))
+        this.dislikeButton.addEventListener("dblclick", this.handleDislikeDoubleClick.bind(this))
+        
 
         this.registerHotkeys()
     }
@@ -61,21 +86,28 @@ class PlayerClientUI implements BaseViewInterface {
         })
     }
 
-    private handlePrevSongClick() {
-        this.remoteClient.provide(PlayerCapability.PreviousTrack)
-    }
-    private handleNextSongClick() {
-        this.remoteClient.provide(PlayerCapability.NextTrack)
+    private handleCapabilityClick(capability) {
+        this.remoteClient.provide(capability)
     }
 
-    private handlePlayPauseClick() {
-        this.remoteClient.provide(PlayerCapability.TogglePlaying)
+    private handleDislikeSingleClick() {
+        this.timer = setTimeout(() => {
+            if (!this.dislikePreventSingleClick) {
+                this.showMessage("Click 2 times to activate undoable action")
+            }
+            this.dislikePreventSingleClick = false;
+          }, this.CLICK_DELAY);
+    }
+
+    private handleDislikeDoubleClick() {
+        clearTimeout(this.timer);
+        this.dislikePreventSingleClick = true;
+        this.remoteClient.provide(PlayerCapability.StrongDislike)
     }
 
     private handleSwitchToPlayerClick() {
         this.globalServiceProvider.switchToActivePlayer()
     }
-
       
     showError(msg){
         this.messageElement.className = "error-message"
@@ -96,5 +128,31 @@ class PlayerClientUI implements BaseViewInterface {
           this.messageElement.textContent = "";
           this.messageElement.style.display = "none";
         }, 1000 * 2)
+    }
+
+    // PLAYER INTERFACE DELEGATE 
+
+    durationStatusUpdate(duration: TrackDuration) {
+        this.progressBar.style.width = (duration.currentProgress * 100).toString() + "%"
+    }
+    playingStatusUpdate(isPlaying: boolean) {
+        if(isPlaying) {
+            this.playPauseButton.textContent = "Pause"
+        } else {
+            this.playPauseButton.textContent = "Play"
+        }
+    }
+
+    trackInfoUpdate(trackInfo: TrackInfo) {
+        let text = trackInfo.name + ""
+        text += trackInfo.artists.reduce((accum, artist) => { return accum + ', ' + artist}, "")
+        this.titleElement.textContent = text
+    }
+    likeStatusUpdate(isLiked: boolean) {
+        if(isLiked) {
+            this.toggleLikeButton.textContent = "Unlike"
+        } else {
+            this.toggleLikeButton.textContent = "Like"
+        }
     }
 }

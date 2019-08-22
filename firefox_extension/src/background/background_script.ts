@@ -15,8 +15,9 @@ import {
   MessageChannelServer, MessageConsumerInterface, MessageChannelClient
 } from "../common"
 import {
+  PlayerDelegateForwarder,
   RemotePlayerClient, RemotePlayerForwarder, RemotePlayerForwarderReceiverStyle,
-  ActivePlayerManagerInterface, ActivePlayerManager
+  ActivePlayerManagerInterface, ActivePlayerManager, RemotePlayerDelegateReceiver, PrintPlayerDelegate, RemotePlayerDelegateSender, RemotePlayerState
 } from '../players'
 import {
   BackgroundScriptCommandDispatcher,
@@ -53,6 +54,13 @@ receiver.register(function(message, sendResponse) {
 let playerClient: PlayerClientInterface
 let playerForwarder: RemotePlayerForwarder
 let nativeAppPlayerForwarder
+
+let tollbarPlayerDelegateSender = new RemotePlayerDelegateSender("background->toolbar[playerStatus]", runtimeSender)
+let remotePlayerState = new RemotePlayerState(tollbarPlayerDelegateSender)
+let playerDelegateForwarder = new PlayerDelegateForwarder([tollbarPlayerDelegateSender, remotePlayerState])
+let playerDelegateReceiver = new RemotePlayerDelegateReceiver("content->background[PlayerStatus]", playerDelegateForwarder)
+dispatcher.addReceiver(playerDelegateReceiver)
+dispatcher.addReceiver(remotePlayerState)
 
 
 tabManager.scanTabs().then(() => {

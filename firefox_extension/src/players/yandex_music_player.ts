@@ -9,77 +9,138 @@ export { YandexMusicPlayer }
 
 class YandexMusicPlayer implements PlayerInterface {
 
+    constructor(public requestedCapabilities: PlayerCapabilities) {}
+
     capabilities: PlayerCapabilities = new Set<PlayerCapability>()
     delegate?: PlayerDelegateInterface
 
     attach(document: Document): PlayerCapabilities {
         this.document = document
 
-        let capabilities = new Set<PlayerCapability>()
+        this.capabilities = new Set<PlayerCapability>()
 
-        this.prevSongElem = document.querySelector(".player-controls__btn_prev")
-        if(this.prevSongElem) {
-            capabilities.add(PlayerCapability.PreviousTrack)
-        }
+        this.requestedCapabilities.forEach((capability) => {
+            switch (capability) {
+                case PlayerCapability.NextTrack:
+                    this.setupNextTrackCapability()
+                    return
+                case PlayerCapability.PreviousTrack:
+                    this.setupPrevTrackCapability()
+                    return
+                case PlayerCapability.TogglePlaying:
+                    this.setupTogglePlayingCapability()
+                    return
+                case PlayerCapability.ToggleLike:
+                    this.setupToggleLikeCapability()
+                    return
+                case PlayerCapability.PlayingStatus:
+                    this.setupPlayingStatusCapability()
+                    return
+                case PlayerCapability.DurationStatus:
+                    this.setupDurationStatusCapability()
+                    return
+                case PlayerCapability.TrackInfo:
+                    this.setupTrackInfoCapability()
+                    return
+                case PlayerCapability.LikeStatus:
+                    this.setupLikeStatusCapability()
+                    return
+                case PlayerCapability.StepBack:
+                    this.setupStepBackCapability()
+                    return
+                case PlayerCapability.StepForward:
+                    this.setupStepForwardCapability()
+                    return
+                case PlayerCapability.StrongDislike:
+                    this.setupStrongDislikeCapability()
+                    return
+                default:
+                    return
+            }
+        })
+        return this.capabilities
+    }
+
+
+    // setup capabilities 
+
+    private setupNextTrackCapability() {
         this.nextSongElem = document.querySelector(".player-controls__btn_next")
-        if(this.nextSongElem) {
-            capabilities.add(PlayerCapability.NextTrack)
-        }
+        this.capabilities.add(PlayerCapability.NextTrack)
+    }
+    private setupPrevTrackCapability() {
+        this.prevSongElem = document.querySelector(".player-controls__btn_prev")
+        this.capabilities.add(PlayerCapability.PreviousTrack)
+    }
+    private setupTogglePlayingCapability() {
         this.playPauseElem = document.querySelector(".player-controls__btn_play")
-        if (this.playPauseElem) {
-            capabilities.add(PlayerCapability.TogglePlaying)
-            this.isPlaying = this.extractPlayingStatus()
-            if(this.delegate){
-                this.delegate.playingStatusChanged(this.isPlaying)
-            }
+        this.capabilities.add(PlayerCapability.TogglePlaying)
+    }
+    private setupToggleLikeCapability() {
+        if (this.likeButton == null) {
+            this.likeButton = document.querySelector(".d-like.player-controls__btn")
         }
-
-        this.likeButton = document.querySelector(".d-like.player-controls__btn")
-        if (this.likeButton) {
-            capabilities.add(PlayerCapability.ToggleLike)
-            this.isLiked = this.likeButton.classList.contains("d-like_on")
-            if(this.delegate) {
-                this.delegate.likeStatusChanged(this.isLiked)
-            }
+        this.capabilities.add(PlayerCapability.ToggleLike)
+    }
+    private setupPlayingStatusCapability() {
+        this.isPlaying = this.extractPlayingStatus()
+        this.capabilities.add(PlayerCapability.PlayingStatus)
+        if(this.delegate){
+            this.delegate.playingStatusUpdate(this.isPlaying)
         }
-
-        capabilities.add(PlayerCapability.StepBack)
-        capabilities.add(PlayerCapability.StepForward)
-
-        this.strongDislikeButton = document.querySelector(".dislike.player-controls__btn")
-        if (this.strongDislikeButton) {
-            capabilities.add(PlayerCapability.StrongDislike)
-        }
-        
-        this.trackTitle = document.querySelector(".track__title")
-        this.trackArtists = document.querySelector(".track__artists")
-        this.playerControlMain = document.querySelector(".player-controls__track-container")
-        if(this.trackTitle != null && this.trackArtists != null) {
-            capabilities.add(PlayerCapability.TrackInfo)
-            this.setupTrackInfoObserver()
-            this.trackInfo = this.extrackTrackInfo()
-            if(this.delegate) {
-                this.delegate.trackInfoChanged(this.trackInfo)
-            }
-        }
-
+    }
+    private setupDurationStatusCapability() {
         this.progressLeft = document.querySelector(".progress__left")
         this.progressRight = document.querySelector(".progress__right")
         this.setupProgressObserver()
         this.capabilities.add(PlayerCapability.DurationStatus)
-
-
-        this.capabilities = capabilities
-        return capabilities
+    }
+    private setupTrackInfoCapability() {
+        this.trackTitle = document.querySelector(".track__title")
+        this.trackArtists = document.querySelector(".track__artists")
+        this.playerControlMain = document.querySelector(".player-controls__track-container")
+        this.setupTrackInfoObserver()
+        this.trackInfo = this.extrackTrackInfo()
+        this.capabilities.add(PlayerCapability.TrackInfo)
+        if(this.delegate) {
+            this.delegate.trackInfoUpdate(this.trackInfo)
+        }
+    }
+    private setupLikeStatusCapability() {
+        if (this.likeButton == null) {
+            this.likeButton = document.querySelector(".d-like.player-controls__btn")
+        }
+        this.isLiked = this.likeButton.classList.contains("d-like_on")
+        this.capabilities.add(PlayerCapability.LikeStatus)
+        if(this.delegate) {
+            this.delegate.likeStatusUpdate(this.isLiked)
+        }
+    }
+    private setupStepBackCapability() {
+        this.capabilities.add(PlayerCapability.StepBack)
+    }
+    private setupStepForwardCapability() {
+        this.capabilities.add(PlayerCapability.StepForward)
+    }
+    private setupStrongDislikeCapability() {
+        this.strongDislikeButton = document.querySelector(".dislike.player-controls__btn")
+        this.capabilities.add(PlayerCapability.StrongDislike)
     }
 
     provide(capability: PlayerCapability): Result {
+
+        if(!this.capabilities.has(capability)) {
+            return "NotSupported"
+        }
+
         switch (capability) {
             case PlayerCapability.TogglePlaying:
                 this.playPauseElem.click()
-                this.isPlaying = this.extractPlayingStatus()
-                if(this.delegate) {
-                    this.delegate.playingStatusChanged(this.isPlaying)
+                if(this.capabilities.has(PlayerCapability.PlayingStatus)) {
+                    this.isPlaying = this.extractPlayingStatus()
+                    if(this.delegate) {
+                        this.delegate.playingStatusUpdate(this.isPlaying)
+                    }
                 }
                 return "Success"
             case PlayerCapability.PreviousTrack:
@@ -90,41 +151,42 @@ class YandexMusicPlayer implements PlayerInterface {
                 return "Success"
             case PlayerCapability.ToggleLike:
                 this.handleToggleLike()
+                return "Success"
             case PlayerCapability.StepForward:
                 this.handleStepForward()
+                return "Success"
             case PlayerCapability.StepBack:
                 this.handleStepBack()
+                return "Success"
             case PlayerCapability.StrongDislike:
                 this.handleStrongDislike()
+                return "Success"
             default:
                 return "Error"
         }
     }
 
-
     private handleStepForward() {
         let event = new KeyboardEvent('keydown', {key: "ArrowRight", code: "ArrowRight", bubbles: true, keyCode: 39, which: 39} as any)
         this.document.dispatchEvent(event)
     }
-
     private handleStepBack() {
         let event = new KeyboardEvent('keydown', {key: "ArrowLeft", code: "ArrowLeft", bubbles: true, keyCode: 37, which: 37} as any)
         this.document.dispatchEvent(event)
     }
-
     private handleToggleLike() {
         this.likeButton.click()
         this.refreshLike()
+        if(this.capabilities.has(PlayerCapability.LikeStatus)){
+            this.refreshLikeStatus()   
+        }
     }
-
     private handleStrongDislike() {
         if(this.strongDislikeButton == null || !this.document.body.contains(this.strongDislikeButton)) {
             this.refreshStrongDislike()
         }
         this.strongDislikeButton.click()
     }
-
-
     private setupTrackInfoObserver() {
         this.trackInfoObserver = new MutationObserver(this.onObserveTrackInfoDomChanges.bind(this))
         this.trackInfoObserverConfig = { characterData: false, attributes: false, childList: true, subtree: true };
@@ -145,9 +207,9 @@ class YandexMusicPlayer implements PlayerInterface {
         this.trackInfo = this.extrackTrackInfo()
         this.isPlaying = this.extractPlayingStatus()
         if(this.delegate) {
-            this.delegate.likeStatusChanged(this.isLiked)
-            this.delegate.playingStatusChanged(this.isPlaying)
-            this.delegate.trackInfoChanged(this.trackInfo)
+            this.delegate.likeStatusUpdate(this.isLiked)
+            this.delegate.playingStatusUpdate(this.isPlaying)
+            this.delegate.trackInfoUpdate(this.trackInfo)
         }
     }
 
@@ -167,7 +229,7 @@ class YandexMusicPlayer implements PlayerInterface {
             currentProgress: this.computeProgress(currentDuration, duration)
         }
         if(this.delegate) {
-            this.delegate.durationStatusChanged(this.trackDuration)
+            this.delegate.durationStatusUpdate(this.trackDuration)
         }
     }
 
@@ -182,16 +244,16 @@ class YandexMusicPlayer implements PlayerInterface {
 
     private refreshLike() {
         this.likeButton = document.querySelector(".d-like.player-controls__btn")
-        this.isLiked = this.likeButton.classList.contains("d-like_on")
+    }
+    private refreshLikeStatus() {
+        this.isLiked = this.likeButton.classList.contains("d-like_on")    
         if(this.delegate) {
-            this.delegate.likeStatusChanged(this.isLiked)
+            this.delegate.likeStatusUpdate(this.isLiked)
         }
     }
-
     private refreshStrongDislike() {
         this.strongDislikeButton = document.querySelector(".dislike.player-controls__btn")
     }
-
     private refreshTrackInfo() {
         this.trackTitle = document.querySelector(".track__title")
         this.trackArtists = document.querySelector(".track__artists")

@@ -16,6 +16,8 @@ enum RemoteMessageType {
     Error = "Error",
     Debug = "Debug",
     PlayerControl = "PlayerControl",
+    PlayerStatus = "PlayerStatus",
+    PlayerState = "PlayerState",
     PlayerResult = "PlayerResult",
     ConsumedEmptyResponse = "ConsumedEmptyResponse",
     GlobalService = "GlobalService",
