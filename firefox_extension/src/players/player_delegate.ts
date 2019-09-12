@@ -8,7 +8,7 @@ export { PlayerDelegateForwarder, PrintPlayerDelegate}
 
 class PlayerDelegateForwarder implements PlayerDelegateInterface {
     
-    constructor(public delegates: Array<PlayerDelegateInterface>) {}
+    constructor(private delegates: Array<PlayerDelegateInterface>) {}
 
     durationStatusUpdate(duration: TrackDuration) {
         this.delegates.forEach((delegate) => {
@@ -29,6 +29,18 @@ class PlayerDelegateForwarder implements PlayerDelegateInterface {
         this.delegates.forEach((delegate) => {
             delegate.likeStatusUpdate(isLiked)
         })
+    }
+
+    addDelegate(delegate: PlayerDelegateInterface) {
+        if (this.delegates.indexOf(delegate) == -1) {
+            this.delegates.push(delegate)
+        }
+    }
+    removeDelegate(delegate: PlayerDelegateInterface) {
+        let index = this.delegates.indexOf(delegate)
+        if(index != -1) {
+            this.delegates.splice(index, 1)
+        }
     }
 }
 

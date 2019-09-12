@@ -12,12 +12,15 @@ import {
   BaseViewInterface, ConsoleView,
   MessageDispatcher,
   TabsManager,
-  MessageChannelServer, MessageConsumerInterface, MessageChannelClient
+  MessageChannelServer, MessageConsumerInterface, MessageChannelClient, RemoteMessageType,
+  RemoteAgentsManager, RemoteAgentType
 } from "../common"
 import {
   PlayerDelegateForwarder,
   RemotePlayerClient, RemotePlayerForwarder, RemotePlayerForwarderReceiverStyle,
-  ActivePlayerManagerInterface, ActivePlayerManager, RemotePlayerDelegateReceiver, PrintPlayerDelegate, RemotePlayerDelegateSender, RemotePlayerState
+  ActivePlayerManagerInterface, ActivePlayerManager, RemotePlayerDelegateReceiver, 
+  PrintPlayerDelegate, RemotePlayerDelegateSender, RemotePlayerState, 
+  RemotePlayerDelegateBySubscriptonServer
 } from '../players'
 import {
   BackgroundScriptCommandDispatcher,
@@ -55,12 +58,17 @@ let playerClient: PlayerClientInterface
 let playerForwarder: RemotePlayerForwarder
 let nativeAppPlayerForwarder
 
-let tollbarPlayerDelegateSender = new RemotePlayerDelegateSender("background->toolbar[playerStatus]", runtimeSender)
-let remotePlayerState = new RemotePlayerState(tollbarPlayerDelegateSender)
-let playerDelegateForwarder = new PlayerDelegateForwarder([tollbarPlayerDelegateSender, remotePlayerState])
-let playerDelegateReceiver = new RemotePlayerDelegateReceiver("content->background[PlayerStatus]", playerDelegateForwarder)
+let playerDelegateForwarder = new PlayerDelegateForwarder([]) 
+let remotePlayerState = new RemotePlayerState(playerDelegateForwarder)
+let playerDelegateReceiver = new RemotePlayerDelegateReceiver("content->background[PlayerStatus]", remotePlayerState)
 dispatcher.addReceiver(playerDelegateReceiver)
 dispatcher.addReceiver(remotePlayerState)
+
+let remoteSendersManager = new RemoteAgentsManager()
+remoteSendersManager.registerSender(RemoteAgentType.Popup, runtimeSender)
+
+let playerDelegateBySubscription = new RemotePlayerDelegateBySubscriptonServer(remoteSendersManager, playerDelegateForwarder)
+dispatcher.addReceiver(playerDelegateBySubscription)
 
 
 tabManager.scanTabs().then(() => {
@@ -80,6 +88,7 @@ tabManager.onTabClosed = (tabId, source) => {
 
 function registerSupportObjects(tabId) {
   let sender = new TabSender(tabId)
+  remoteSendersManager.registerSender(RemoteAgentType.ContentScript, sender)
   contentChannelClient = new MessageChannelClient(sender, "content<-background")
   contentChannelServer = new MessageChannelServer(sender, "content->background", view)
   playerClient = new RemotePlayerClient(contentChannelClient)
@@ -107,7 +116,9 @@ function runNativeApp() {
   nativeReceiver.register((message, notUsed) => {
     dispatcher.dispatch(message, notUsed)
   })
+  remoteSendersManager.registerSender(RemoteAgentType.NativeApp, nativeSender)
   port.onDisconnect.addListener((p) => {
+    remoteSendersManager.unregisterSenderType(RemoteAgentType.NativeApp)
     if (p.error) {
       view.showError(`Disconnected due to an error: ${p.error.message}`);
     }

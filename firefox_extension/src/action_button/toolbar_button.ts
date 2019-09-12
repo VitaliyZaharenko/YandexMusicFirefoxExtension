@@ -9,7 +9,7 @@ import {
   RemoteReceiver,
   BasicReceiver,
   BasicSender,
-  MessageChannelClient, MessageChannelServer, MessageConsumerInterface, RemoteMessageType
+  MessageChannelClient, MessageChannelServer, MessageConsumerInterface, RemoteMessageType, RemoteAgentType
 } from "../common"
 import {
   PlayerCapability, PlayerCapabilities
@@ -18,7 +18,7 @@ import {
   GlobalServicesProviderClient 
 } from '../providers';
 import { 
-  RemotePlayerClient, RemotePlayerDelegateReceiver 
+  RemotePlayerClient, RemotePlayerDelegateReceiver, RemotePlayerDelegateSubscriptionMessage, RemotePlayerDelegateSubscriptionAction, RemotePlayerDelegateBySubscriptonServer, RemotePlayerDelegateBySubscriptonClient 
 } from '../players';
 
 let selfAgent = new RemoteMessageIdentity("ToolbarButtonAgent")
@@ -31,7 +31,8 @@ let playerUI: PlayerClientUI = new PlayerClientUI(remotePlayer, supportedCapabil
 let dispatcher = new ActionButtonScriptDispatcher(selfAgent, playerUI)
 let receiver: RemoteReceiver = new BasicReceiver()
 let channelServer = new MessageChannelServer(sender, "toolbar<-background", playerUI)
-let playerDelegateReceiver = new RemotePlayerDelegateReceiver("background->toolbar[playerStatus]", playerUI)
+let playerDelegateReceiver = new RemotePlayerDelegateReceiver(RemoteAgentType.Popup.toString(), playerUI)
+let playerDelegateBySubscriptionClient = new RemotePlayerDelegateBySubscriptonClient(sender)
 
 dispatcher.addReceiver(channelClient)
 dispatcher.addReceiver(channelServer)
@@ -42,12 +43,31 @@ receiver.register((message, sendResponse) => {
 
 document.addEventListener("DOMContentLoaded", handleDomLoaded);
 
+window.addEventListener("load", () => {
+  registerPopup()
+  requestCurrentState()
+})
+window.addEventListener("unload", unregisterPopup)
+
 function handleDomLoaded(e){
   playerUI.attach(document)
+  dispatcher.addReceiver(playerDelegateReceiver)
+}
+
+
+function requestCurrentState() {
+  // request player state to pass it state to it's delegate
   sender.send({
     messageType: RemoteMessageType.PlayerState,
     message: {}
   })
-  dispatcher.addReceiver(playerDelegateReceiver)
+}
+
+function registerPopup() {
+  playerDelegateBySubscriptionClient.subscribe(RemoteAgentType.Popup)
+}
+
+function unregisterPopup() {
+  playerDelegateBySubscriptionClient.unsubscribe(RemoteAgentType.Popup)
 }
 

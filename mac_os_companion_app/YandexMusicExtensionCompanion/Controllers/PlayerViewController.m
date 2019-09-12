@@ -5,6 +5,10 @@
 #import "VTZUtils.h"
 #import "VTZConstants.h"
 #import "VTZBrowserMediaPlayer.h"
+#import "VTZRemoteMessage.h"
+
+
+dispatch_queue_t vcSerialQueue;
 
 @implementation PlayerViewController {
     VTZBrowserMediaPlayer* player;
@@ -98,19 +102,28 @@
 
 - (void) commonInit {
     [self subscribeToNotifications];
-    [VTZUtils startListerningStdinInBackground:nil];
+    [VTZUtils startListerningStdinInBackground:self];
     player = [[VTZBrowserMediaPlayer alloc] initWithView:self];
+    vcSerialQueue = dispatch_queue_create("com.vit.zzz.vc", DISPATCH_QUEUE_SERIAL);
 }
 
-// should be called in main thread
+// should be called on main thread
 
 - (void) messageFromStdinReceived: (NSString*) message {
-    NSAssert(NO, @"NOT IMPELEMENTED");
+    //[self sendOtherMessageWithPayload:message];
+    // TODO: - Implement
 }
 
 - (void) subscribeToNotifications {
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleNotification:) name: VTZApplicationStdInputNotification object: self];    
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(handleMediaKeys:) name: VTZApplicationDidPressMediaKeyNotification object: nil];
+}
+
+- (void) sendOtherMessageWithPayload: (NSString* )payload {
+    dispatch_async(vcSerialQueue, ^{
+        VTZRemoteMessage* message = [VTZRemoteMessage otherWithPayload:payload];
+        [VTZUtils writeToStdout:[message toJsonString]];
+    });
 }
 
 @end

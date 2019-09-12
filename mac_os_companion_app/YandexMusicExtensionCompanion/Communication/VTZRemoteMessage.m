@@ -1,10 +1,8 @@
-//Created by vzakharenko
-
 #import <Foundation/Foundation.h>
 #import "VTZRemoteMessage.h"
 
 NSString* const VTZRemoteMessageTypePlayerControl = @"PlayerControl";
-
+NSString* const VTZRemoteMessageTypeOther = @"Other";
 
 @implementation VTZRemoteMessage
 
@@ -19,13 +17,19 @@ NSString* const VTZRemoteMessageTypePlayerControl = @"PlayerControl";
     return message;
 }
 
++ (instancetype) otherWithPayload: (NSString * const)payload {
+    VTZRemoteMessage * message = [[VTZRemoteMessage alloc] init];
+    message.content = [[NSMutableDictionary alloc] init];
+    message.content[@"messageType"] = VTZRemoteMessageTypeOther;
+    message.content[@"message"] = @{@"payload": payload};
+    return message;
+}
+
 - (NSString *) toJsonString {
     NSData* json = [NSJSONSerialization dataWithJSONObject: [self content]
                                                    options:NSJSONWritingPrettyPrinted
                                                      error:nil];
     return [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
 }
-
-
 
 @end

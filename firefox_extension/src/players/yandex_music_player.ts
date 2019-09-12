@@ -202,12 +202,13 @@ class YandexMusicPlayer implements PlayerInterface {
 
     private handleTrackChange() {
         this.refreshLike()
+        // delegate for like called inside
+        this.refreshLikeStatus()
         this.refreshStrongDislike()
         this.refreshTrackInfo()
         this.trackInfo = this.extrackTrackInfo()
         this.isPlaying = this.extractPlayingStatus()
         if(this.delegate) {
-            this.delegate.likeStatusUpdate(this.isLiked)
             this.delegate.playingStatusUpdate(this.isPlaying)
             this.delegate.trackInfoUpdate(this.trackInfo)
         }

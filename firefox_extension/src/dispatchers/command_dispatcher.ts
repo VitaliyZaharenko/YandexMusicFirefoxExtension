@@ -2,6 +2,7 @@ import { PlayerClientInterface } from "../player/player_interface";
 import { PlayerCapability } from "../player/capabilities";
 import { BaseViewInterface } from "../common/console_view"
 import { ActivePlayerManagerInterface } from "../players/active_player_manager";
+import { PatternRecognizerInterface, TimedEvent, DoubleEventRecognizer, SingleEventRecognizer } from "../recognizers/pattern_recognizer";
 
 
 export { Command, CommandDispatcherInterface, BackgroundScriptCommandDispatcher }
@@ -18,12 +19,17 @@ interface CommandDispatcherInterface {
 
 class BackgroundScriptCommandDispatcher implements CommandDispatcherInterface {
 
+
+    private singleRecognizer: SingleEventRecognizer<Command>
+    private doubleRecognizer: DoubleEventRecognizer<Command>
+
     constructor(
         private view: BaseViewInterface,
         private playerManager: ActivePlayerManagerInterface,
         public onRunNativeAppCommand)
     {
         this.registerCommands()
+        this.setupRecognizers()
     }
 
     private registerCommands(){
@@ -32,8 +38,24 @@ class BackgroundScriptCommandDispatcher implements CommandDispatcherInterface {
         })
     }
 
+    private setupRecognizers() {
+        //this.doubleRecognizer = new DoubleEventRecognizer()
+        //this.doubleRecognizer.onDoubleEvent = this.handleDoubleCommand.bind(this)
+        this.singleRecognizer = new SingleEventRecognizer(null)
+        this.singleRecognizer.onSingleEvent = this.handleSingleCommand.bind(this)
+    }
+
 
     dispatch(command: Command) {
+        this.singleRecognizer.consumeEntity(command)
+    }
+
+    handleDoubleCommand(recognizer, command) {
+        console.log("DOUBLE COMMAND---------")
+        console.log(command)
+    }
+
+    handleSingleCommand(recognizer, command) {
         switch (command.name){
             case 'prev-track-command':
                 this.playerManager.active.provide(PlayerCapability.PreviousTrack)
