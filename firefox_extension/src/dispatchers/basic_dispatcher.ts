@@ -1,5 +1,7 @@
-import { MessageDispatcher, MessageReceiver } from '../common/message_broker'
-import { RemoteSender, RemoteMessage, RemoteMessageType, RemoteIdentity } from '../common/remote_message';
+import { 
+    MessageDispatcher, MessageReceiver,
+    RemoteSender, RemoteMessage, RemoteMessageType, RemoteIdentity
+} from '../common'
 
 export { BasicDispatcher }
 

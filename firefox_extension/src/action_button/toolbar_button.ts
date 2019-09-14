@@ -15,15 +15,15 @@ import {
   PlayerCapability, PlayerCapabilities
 } from '../player'
 import { 
-  GlobalServicesProviderClient 
-} from '../providers';
+  GlobalServicesClient 
+} from '../global_services';
 import { 
   RemotePlayerClient, RemotePlayerDelegateReceiver, RemotePlayerDelegateSubscriptionMessage, RemotePlayerDelegateSubscriptionAction, RemotePlayerDelegateBySubscriptonServer, RemotePlayerDelegateBySubscriptonClient 
 } from '../players';
 
 let selfAgent = new RemoteMessageIdentity("ToolbarButtonAgent")
 let sender = new BasicSender()
-let globalServiceClient = new GlobalServicesProviderClient(selfAgent, sender)
+let globalServiceClient = new GlobalServicesClient(selfAgent, sender)
 let channelClient = new MessageChannelClient(sender, "toolbar->background")
 let remotePlayer = new RemotePlayerClient(channelClient)
 let supportedCapabilities: PlayerCapabilities = new Set([PlayerCapability.NextTrack, PlayerCapability.PreviousTrack, PlayerCapability.TogglePlaying])

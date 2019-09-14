@@ -5,7 +5,7 @@ html, body {
   color: rgb(255, 255, 255);
 }
 
-#background {
+.background {
   background-color: rgba(47, 220, 237, 0.91);
   background-image: url(../images/music_background.jpg);
   background-size: cover;
@@ -104,4 +104,28 @@ progress bar
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+
+/************
+NOT ACTIVE UI
+*************/
+
+.inactive {
+  display: none;
+}
+
+.player-not-active-content{
+  background-color: #b7ec20;
+  height: 100%;
+  width: 100%;
+  display: table;
+}
+
+.player-not-active-content div {
+  display: table-cell;
+  vertical-align: middle;
+  height: 100%;
+  text-align: center;
+  font-size: 3em;
 }

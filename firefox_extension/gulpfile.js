@@ -8,17 +8,17 @@ const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 
 
-const tsProject = ts.createProject('tsconfig_background.json')
+const tsProject = ts.createProject('tsconfig.json')
 
 
 gulp.task('compile:ts', function () {
   return tsProject.src()
       .pipe(tsProject())
-      .js
       .on('error', (error) => {
         notifier.notify({title: "Gulp", message: "Error when compiling TypeScript"});
         console.log(error)
       })
+      .js
       .pipe(gulp.dest('./lib'));
 });
 
@@ -45,15 +45,11 @@ gulp.task('bundle:toolbarButtonScript', function() {
 });
 
 
-
-
 gulp.task("build:backgroundScript", gulp.series('compile:ts', 'bundle:backgroundScript'))
 
 gulp.task("bundle", gulp.series('bundle:backgroundScript', 'bundle:yandexContentScript', 'bundle:toolbarButtonScript'))
 
 gulp.task("build", gulp.series("compile:ts", "bundle"))
-
-//gulp.task('build', gulp.series('compileTypeScript'))
 
 gulp.task('clean', async function() {
   return del('lib')

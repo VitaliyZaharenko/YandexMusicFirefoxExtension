@@ -8,9 +8,12 @@ import {
 } from '../player'
 
 import { 
-    GlobalServicesProviderInterface,
     BaseViewInterface
 } from "../common";
+
+import {
+    GlobalServicesInterface,
+} from "../global_services"
 
 export { PlayerClientUI }
 
@@ -27,6 +30,7 @@ class PlayerClientUI implements BaseViewInterface, PlayerDelegateInterface {
     private dislikeButton: HTMLElement
     private progressBar: HTMLElement
     private switchToPlayerButton: HTMLElement
+    private runNativeAppButton: HTMLElement
 
     private dislikePreventSingleClick = false
     private timer;
@@ -37,24 +41,25 @@ class PlayerClientUI implements BaseViewInterface, PlayerDelegateInterface {
     constructor(
         private remoteClient: PlayerClientInterface,
         public supportedCapabilities: PlayerCapabilities,
-        private globalServiceProvider: GlobalServicesProviderInterface,
+        private globalServices: GlobalServicesInterface,
     ){  
     }
 
     attach(document: Document) {
 
         this.document = document
-        this.messageElement = document.querySelector("#message-ui");
-        this.titleElement = document.querySelector("#song-title");
-        this.prevButton = document.querySelector("#prev-song");
-        this.nextButton = document.querySelector("#next-song");
-        this.playPauseButton = document.querySelector("#play-pause");
+        this.messageElement = document.querySelector("#message-ui")
+        this.titleElement = document.querySelector("#song-title")
+        this.prevButton = document.querySelector("#prev-song")
+        this.nextButton = document.querySelector("#next-song")
+        this.playPauseButton = document.querySelector("#play-pause")
         this.stepBackButton = document.querySelector("#step-back")
         this.stepForwardButton = document.querySelector("#step-forward")
         this.toggleLikeButton = document.querySelector("#toggle-like")
         this.dislikeButton = document.querySelector("#dislike")
         this.progressBar = document.querySelector("#progress-bar")
-        this.switchToPlayerButton = document.querySelector("#switch-to-player-tab");
+        this.switchToPlayerButton = document.querySelector("#switch-to-player-tab")
+        this.runNativeAppButton = document.querySelector("#run-native-app")
         this.prevButton.addEventListener("click", this.handleCapabilityClick.bind(this, PlayerCapability.PreviousTrack));
         this.playPauseButton.addEventListener("click", this.handleCapabilityClick.bind(this, PlayerCapability.TogglePlaying));
         this.nextButton.addEventListener("click", this.handleCapabilityClick.bind(this, PlayerCapability.NextTrack));
@@ -62,6 +67,7 @@ class PlayerClientUI implements BaseViewInterface, PlayerDelegateInterface {
         this.stepForwardButton.addEventListener('click', this.handleCapabilityClick.bind(this, PlayerCapability.StepForward))
         this.toggleLikeButton.addEventListener('click', this.handleCapabilityClick.bind(this, PlayerCapability.ToggleLike))
         this.switchToPlayerButton.addEventListener("click", this.handleSwitchToPlayerClick.bind(this));
+        this.runNativeAppButton.addEventListener('click', this.handleRunNativeApp.bind(this))
         this.dislikeButton.addEventListener('click', this.handleDislikeSingleClick.bind(this))
         this.dislikeButton.addEventListener("dblclick", this.handleDislikeDoubleClick.bind(this))
         
@@ -106,7 +112,12 @@ class PlayerClientUI implements BaseViewInterface, PlayerDelegateInterface {
     }
 
     private handleSwitchToPlayerClick() {
-        this.globalServiceProvider.switchToActivePlayer()
+        this.globalServices.switchToActivePlayer()
+        window.close()
+    }
+
+    private handleRunNativeApp() {
+        this.globalServices.runNativeApp()
     }
       
     showError(msg){

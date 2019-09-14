@@ -27,8 +27,8 @@ import {
   BackgroundScriptDispatcher
 } from '../dispatchers'
 import { 
-  GlobalServicesProviderServer 
-} from '../providers'
+  GlobalServicesServer 
+} from '../global_services'
 
 let view: BaseViewInterface = new ConsoleView()
 let receiver: RemoteReceiver = new BasicReceiver()
@@ -38,7 +38,10 @@ let commandDispatcher = new BackgroundScriptCommandDispatcher(view, playerManage
   runNativeApp()
 })
 let tabManager = new TabsManager()
-let globalServices = new GlobalServicesProviderServer(selfAgent, tabManager)
+let globalServices = new GlobalServicesServer(selfAgent, tabManager)
+globalServices.onRunNativeApp = () => {
+  runNativeApp()
+}
 let dispatcher: MessageDispatcher = new BackgroundScriptDispatcher(selfAgent, view, playerManager)
 let runtimeSender = new BasicSender()
 let toolbarChannelServer = new MessageChannelServer(runtimeSender, "toolbar->background", view)

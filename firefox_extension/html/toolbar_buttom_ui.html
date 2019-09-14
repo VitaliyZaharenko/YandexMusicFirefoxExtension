@@ -7,27 +7,37 @@
   </head>
 
 <body>
-  <div id="background">
-      <span id="song-title" class="text-content"> Song Title </span>
-      <div class="player-control-main clearfix">
-        <div id="prev-song" class="generic-button player-button">Prev</div>
-        <div id="play-pause" class="generic-button player-button">Play</div>
-        <div id="next-song" class="generic-button player-button">Next</div>
-      </div>
-      <div class="player-control-support clearfix">
-        <div id="step-back" class="generic-button player-button">StepBack</div>
-        <div id="step-forward" class="generic-button player-button">StepForward</div>
-        <div id="toggle-like" class="generic-button player-button">Like</div>
-        <div id="dislike" class="generic-button player-button">Dislike</div>
-      </div>
+  <div class="background">
+      <div class="player-active-content">
+        <span id="song-title" class="text-content"> Song Title </span>
+        <div class="player-control-main clearfix">
+          <div id="prev-song" class="generic-button player-button">Prev</div>
+          <div id="play-pause" class="generic-button player-button">Play</div>
+          <div id="next-song" class="generic-button player-button">Next</div>
+        </div>
+        <div class="player-control-support clearfix">
+          <div id="step-back" class="generic-button player-button">StepBack</div>
+          <div id="step-forward" class="generic-button player-button">StepForward</div>
+          <div id="toggle-like" class="generic-button player-button">Like</div>
+          <div id="dislike" class="generic-button player-button">Dislike</div>
+        </div>
       
-      <div id="switch-to-player-tab" class="generic-button">Переключиться на вкладку</div>
+        <div id="switch-to-player-tab" class="generic-button">Переключиться на вкладку</div>
+        <div id="run-native-app" class="generic-button">Запустить нативное приложение</div> 
       
-      <div id="progress-bar" class="progress">
-        <div style='width: 30%'></div>
+        <div id="progress-bar" class="progress">
+          <div style='width: 30%'></div>
+        </div>
+
+        <div id="message-ui"></div>
       </div>
 
-      <div id="message-ui"></div>
+
+      <div class="inactive player-not-active-content">
+        <div>
+          Player Not Active
+        </div>
+      </div>
   </div>
   <script src="../lib/build/toolbar_button_bundle.js"></script>
 </body>

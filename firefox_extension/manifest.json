@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "Universal Music Player",
-  "version": "0.1.0",
+  "version": "0.2.0",
 
   "description": "An extension for managing web music players",
 
@@ -51,12 +51,12 @@
         "default": "Ctrl+Shift+M"
       }
     },
-    "prev-track-command": {
+    "step-back-command": {
       "suggested_key": {
         "default": "Ctrl+Shift+Left"
       }
     },
-    "next-track-command": {
+    "step-forward-command": {
       "suggested_key": {
         "default": "Ctrl+Shift+Right"
       }

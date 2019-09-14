@@ -21,7 +21,6 @@ enum RemoteMessageType {
     PlayerResult = "PlayerResult",
     ConsumedEmptyResponse = "ConsumedEmptyResponse",
     GlobalService = "GlobalService",
-    GlobalServiceResult = "GlobalServiceResult",
     RemotePlayerDelegateSubscription = "RemotePlayerDelegateSubscription"
 }
 

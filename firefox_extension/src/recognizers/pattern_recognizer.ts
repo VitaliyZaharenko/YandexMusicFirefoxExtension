@@ -1,4 +1,7 @@
 
+import {
+    ObjectEquality
+} from '../utilites'
 
 export  {
     PatternRecognizerState,
@@ -15,7 +18,7 @@ enum PatternRecognizerState {
     Successed
 }
 
-interface PatternRecognizerInterface<T> {
+interface PatternRecognizerInterface<T extends ObjectEquality<T>> {
 
     currentState: PatternRecognizerState
 
@@ -31,8 +34,7 @@ interface TimedEvent<T> {
     content: T
 }
 
-
-class DoubleEventRecognizer<T> implements PatternRecognizerInterface<T> {
+class DoubleEventRecognizer<T extends ObjectEquality<T>> implements PatternRecognizerInterface<T> {
 
     currentState: PatternRecognizerState = PatternRecognizerState.Initial;
 
@@ -46,31 +48,42 @@ class DoubleEventRecognizer<T> implements PatternRecognizerInterface<T> {
             date: new Date(),
             content: entity
         }
-        
         if (this.previousEvent == null ) {
-            this.currentState = PatternRecognizerState.Possible
-            this.previousEvent = event
-            if(this.onPossible != null) {
-                this.onPossible(this, entity)
-            }
+            this.recognizerPossible(event)
             return true
         } 
-
         let timeDifference = event.date.getTime() - this.previousEvent.date.getTime()
-
         let prevAfterCurrent: boolean = this.previousEvent.date.getTime() > event.date.getTime()
         let differenceBiggerThenTimeout: boolean = timeDifference >= this.timeoutMilliseconds
-        let entitiesNotSame: boolean = event.content != this.previousEvent.content
-
+        let entitiesNotSame: boolean = event.content.equalsTo(this.previousEvent.content)
         if (prevAfterCurrent || differenceBiggerThenTimeout || entitiesNotSame) {
-            this.currentState = PatternRecognizerState.Failed
-            if(this.onFailed != null) {
-                this.onFailed(this, entity)
-            }
-            this.previousEvent = null
-            return
+            this.recognizerFailed(entity)
+            return true
         }
-        
+
+        this.recognizerSuccessed(entity)
+        return true
+
+    }
+
+    private recognizerPossible(event: TimedEvent<T>) {
+        this.currentState = PatternRecognizerState.Possible
+        this.previousEvent = event
+        if(this.onPossible != null) {
+            this.onPossible(this, event.content)
+            }
+        setTimeout(this.timeout.bind(this), this.timeoutMilliseconds)
+    }
+
+    private recognizerFailed(entity: T) {
+        this.currentState = PatternRecognizerState.Failed
+        if(this.onFailed != null) {
+            this.onFailed(this, entity)
+        }
+        this.previousEvent = null
+    }
+
+    private recognizerSuccessed(entity: T) {
         this.currentState = PatternRecognizerState.Successed
         if (this.onSuccessed) {
             this.onSuccessed(this, entity)
@@ -79,6 +92,12 @@ class DoubleEventRecognizer<T> implements PatternRecognizerInterface<T> {
             this.onDoubleEvent(this, entity)
         }
         this.previousEvent = null
+    }
+
+    private timeout() {
+        if (this.currentState == PatternRecognizerState.Possible) {
+            this.recognizerFailed(this.previousEvent.content)       
+        }
     }
 
     onFailed: (recognizer: PatternRecognizerInterface<T>, reason: T) => void = null
@@ -90,10 +109,16 @@ class DoubleEventRecognizer<T> implements PatternRecognizerInterface<T> {
     
 }
 
-class SingleEventRecognizer<T> implements PatternRecognizerInterface<T> {
+class SingleEventRecognizer<T extends ObjectEquality<T>> implements PatternRecognizerInterface<T> {
     currentState: PatternRecognizerState;
 
-    constructor(public requireToFail: PatternRecognizerInterface<T> | null) {}
+    constructor(public requireToFail: PatternRecognizerInterface<T> | null) {
+        if(requireToFail) {
+            requireToFail.onFailed = (recognizer, reason) => {
+                this.recognizerSuccessed(reason)
+            }
+        }
+    }
 
     consumeEntity(entity: T): boolean {
 
@@ -105,16 +130,35 @@ class SingleEventRecognizer<T> implements PatternRecognizerInterface<T> {
         } 
         
         if(dependentRecognizerFailed || noDependentRecognizer) {
-            this.currentState = PatternRecognizerState.Successed
-            if(this.onSuccessed) { this.onSuccessed(this, entity) }
-            if(this.onSingleEvent) { this.onSingleEvent(this, entity) }
+            this.recognizerSuccessed(entity)
+            return true
+        }
+        let dependentRecognizerPossible = this.requireToFail.currentState == PatternRecognizerState.Possible
+        if(dependentRecognizerPossible) {
+            this.recognizerPossible(entity)
+            return true
         }
 
+        this.recognizerFailed(entity)
+        return true
+    }
+
+    private recognizerSuccessed(entity) {
+        this.currentState = PatternRecognizerState.Successed
+        if(this.onSuccessed) { this.onSuccessed(this, entity) }
+        if(this.onSingleEvent) { this.onSingleEvent(this, entity) }
+    }
+    private recognizerFailed(entity) {
         this.currentState = PatternRecognizerState.Failed
         if(this.onFailed) {
             this.onFailed(this, entity)
         }
-        return true
+    }
+    private recognizerPossible(entity) {
+        this.currentState = PatternRecognizerState.Possible
+        if(this.onPossible) {
+            this.onPossible(this, entity)
+        }
     }
 
     onFailed: (recognizer: PatternRecognizerInterface<T>, reason: T) => void = null

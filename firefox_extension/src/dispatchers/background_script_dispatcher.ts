@@ -1,7 +1,9 @@
-import { MessageDispatcher, MessageReceiver } from '../common/message_broker'
-import { RemoteSender, RemoteMessage, RemoteMessageType, RemoteIdentity } from '../common/remote_message';
-import { ActivePlayerManagerInterface } from '../players/active_player_manager';
-import { BaseViewInterface } from '../common/base_view_interface'
+
+import { 
+    RemoteSender, RemoteMessage, RemoteMessageType, RemoteIdentity,
+    BaseViewInterface
+} from '../common';
+import { ActivePlayerManagerInterface } from '../players';
 import { BasicDispatcher } from '../dispatchers/basic_dispatcher'
 
 export { BackgroundScriptDispatcher }
