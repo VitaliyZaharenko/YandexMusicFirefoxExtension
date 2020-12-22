@@ -14,7 +14,7 @@
     "gulp-debug": "^4.0.0",
     "gulp-typescript": "^5.0.1",
     "madge": "^3.4.4",
-    "node-notifier": "^5.4.0",
+    "node-notifier": "^8.0.1",
     "typescript": "^3.5.3",
     "vinyl-source-stream": "^2.0.0"
   },
